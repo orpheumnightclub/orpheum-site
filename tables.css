@@ -184,6 +184,16 @@
     border-radius: 4px;
 }
 
+/* Tilted table */
+.table-seat--tilted {
+    border-radius: 8px;
+    transform: rotate(-15deg);
+}
+
+.table-seat--tilted:hover {
+    transform: rotate(-15deg) scale(1.05);
+}
+
 /* Zone labels */
 .zone-label {
     position: absolute;
