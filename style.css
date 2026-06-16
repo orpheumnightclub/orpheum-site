@@ -157,6 +157,15 @@ body {
     box-shadow: 0 4px 20px rgba(90, 138, 32, 0.3);
 }
 
+.header__btn--tables {
+    background: transparent;
+    border: 2px solid var(--color-primary);
+}
+
+.header__btn--tables:hover {
+    background: var(--color-primary);
+}
+
 .header__burger {
     display: none;
     flex-direction: column;
