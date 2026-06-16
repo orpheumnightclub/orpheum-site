@@ -44,9 +44,7 @@ var tablesConfig = {
             { id: 'f1-t11', x: 14, y: 74, w: 22, h: 8, seats: 8, zone: 'vip', label: 'Стіл 11', type: 'standard' },
             { id: 'f1-t12', x: 64, y: 74, w: 22, h: 8, seats: 8, zone: 'vip', label: 'Стіл 12', type: 'standard' },
 
-            { id: 'f1-bar', x: 10, y: 86, w: 80, h: 5, seats: 0, zone: 'bar', label: 'Барна стійка', type: 'bar' },
-
-            { id: 'f1-wall', x: 0, y: 83, w: 100, h: 0, seats: 0, zone: 'bar', label: '', type: 'wall' }
+            { id: 'f1-bar', x: 10, y: 92, w: 80, h: 4, seats: 0, zone: 'bar', label: '', type: 'decoration' }
         ]
     },
     floor2: {
@@ -103,7 +101,7 @@ function renderFloor(floorNum) {
     if (floorNum === 1) {
         var entrance = document.createElement('div');
         entrance.className = 'entrance';
-        entrance.style.cssText = 'right:0;bottom:12%;left:auto;transform:none;width:40px;height:40px;border-radius:8px 0 0 8px;';
+        entrance.style.cssText = 'right:0;bottom:18%;left:auto;transform:none;width:40px;height:40px;border-radius:8px 0 0 8px;';
         entrance.textContent = 'Вхід';
         container.appendChild(entrance);
     }
@@ -124,6 +122,15 @@ function renderFloor(floorNum) {
 
     floor.tables.forEach(function(table) {
         if (table.type === 'wall') return;
+
+        if (table.type === 'decoration') {
+            var dec = document.createElement('div');
+            dec.className = 'entrance';
+            dec.style.cssText = 'left:' + table.x + '%;top:' + table.y + '%;width:' + table.w + '%;height:' + table.h + '%;border-radius:4px;bottom:auto;transform:none;';
+            dec.textContent = table.label || 'Бар';
+            container.appendChild(dec);
+            return;
+        }
 
         var el = document.createElement('div');
         var status = tableStatus[table.id] || { status: 'free' };
