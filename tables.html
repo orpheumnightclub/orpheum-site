@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORPHEUM — Карта столів</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="tables.css">
+</head>
+<body>
+
+<header class="header" id="header">
+    <div class="header__inner">
+        <div class="header__left">
+            <a href="index.html" class="header__logo">
+                <svg width="120" height="52" viewBox="0 0 184.2 79.64" xmlns="http://www.w3.org/2000/svg" fill="#ffffff">
+                    <path d="M152.28.84c.36-.58,13.15-.43,13.62.06.96,1.01,1.43,18.28,2.34,18.18s.98-16.72,2.13-18.03c.6-.69,13.37-.86,13.77.2l.05,77.47c-.27,1.1-9.6,1.09-9.6.6V23.88l-3,24.24c-.38.61-5.55.69-6.24.48-1.32-.41-2.61-23.28-3.72-26.16l-.12,26.16h-8.88s-.36-.33-.36-.36V.84Z"/>
+                    <path d="M21.62,47.3c-5.11,7.84-18.18,5.59-20.71-3.69C-.36,38.92-.33,11.95,1.2,7.57c3.78-10.81,19.95-9.62,22.38,1.62,1.36,6.3,1.34,33.05-1.96,38.12ZM13.03,9.29c-1.14-1.42-1.99.73-2.12,1.74-.7,5.46-.7,24.55,0,30.02.48,3.76,2.13,2.01,2.42-.96s.67-29.6-.29-30.8Z"/>
+                    <path d="M75.24.72c.3-.8,7.89-.82,9.01-.61.56.1.99-.05,1.25.67.81,3.41-.84,26.97-.07,28.15.17.27,2.88-.89,3.61-.96,3.01-.3,9.24.14,9.24,4.44v46.56s-.33.36-.36.36h-9.84c-.12,0-.39-.39-.36-.6l.23-45.83c-.21-1.21-2-1.56-2.39-.25-.36,1.2.67,15.48-.6,15.48h-9.36s-.36-.33-.36-.36V.72Z"/>
+                    <path d="M101.52,50.04h69.84l-.3,29.22c-20.04-.26-40.18.53-60.18.32-1.71-.02-8.2.04-9.36-.26-.86-.23-.36-.33-.36-.6v-28.32c0-.07.28-.24.36-.36ZM139.8,63.24c.15-.24,0-4.83,0-5.64,0-.03-.33-.36-.36-.36h-6c-1.62,0,1.85,2.73.37,4.21-2.32,2.32-2.17-7.48-.96-7.93,1.63-.62.92,2.52,1.55,2.52h5.04c.71,0,.25-1.93.02-2.42-1.42-2.97-12.32-3.17-13.04.68-.34,1.82-.5,7.14,1.15,8.33,2.89,2.07,5.23.48,7.8.35.58-.03,3.87,1.15,4.43.26ZM107.52,51.72c-.81-.2-3.28,0-4.32,0-.03,0-.36.33-.36.36v10.8c0,.89,5.04.89,5.04,0v-3.96c1.29.45,2.1,4,3.12,4.44.54.23,4.29.25,4.7-.09.52-.42.68-11.54-.26-11.54h-4.2c-.6,0,.26,4.48-.36,4.55-.66.08-2.39-4.31-3.36-4.55ZM124.2,62.88c.3-.79,0-8.93,0-10.56,0-.82-5.2-.89-5.74-.23-.32.39-.43,9.19-.27,10.08.42,2.34,5.78,1.31,6.01.71ZM149.64,55.8c-2.8,1.44-1.06-4.08-2.04-4.08h-5.04s-.36.33-.36.36v11.04s.33.36.36.36h5.04s.36-.33.36-.36v-4.32c0-.55,1.36-.27,1.68-.12v4.2c0,.9,6,.9,6,0v-10.56c0-.94-6-.76-6-.24v3.72ZM166.2,54.12c2.91,1.47,4.67-2.4,3-2.4h-11.76c-.51,0-.95,1.63-.26,2.19.6.48,3.02.06,3.02.21v8.76c0,.9,6,.9,6,0v-8.76ZM112.62,75.67c-3.11,3.11-2.56-7.35-1.98-7.86,2.44-2.21,2.22,2.86,2.68,3.09.56.28,6.19.38,6.45-.8,1.38-6.34-14.59-5.34-15.98-2.42-.5,1.06-.38,7.4.25,8.41,1.6,2.56,14.46,2.68,15.49-.59.16-.5.28-2.24-.12-2.55-.24-.19-5.83-.21-6.1-.07-.82.41-.05,2.14-.69,2.79ZM129.24,75.24c-.24-.39,0-8,0-9.24,0-.03-.33-.36-.36-.36h-6.24s-.36.33-.36.36v11.64c2.03-.38,9.3.58,10.65-.03.56-.26.56-1.86.25-2.16-.65-.63-3.58.38-3.94-.21ZM150.6,75.6c.41-1.66,0-7.44,0-9.6,0-.03-.33-.36-.36-.36h-6c-1.12,0,.89,13.11-2.16,10.08-.74-.74.69-10.08-.72-10.08h-6s-.36.33-.36.36v9.6c0,2.73,14.75,3.47,15.6,0ZM153.24,66.24c-.31.84,0,9.33,0,11.04,0,.03.33.36.36.36h13.2c.8,0,2.3-.86,2.5-1.82.94-4.47-2.3-3.99-2.38-4.55-.05-.33,3.61-1.21,1.43-4.06-1.32-1.72-12.08-2.04-14.04-1.58-.39.09-.91.18-1.07.61Z"/>
+                    <path d="M45,39.48c1.37.24,3.28,1.28,3.58,2.78l.2,36.2c-.25.54-.73.72-1.27.85-.38.09-7.51.07-7.9.01-.59-.09-1.09-.69-1.1-1.3l.15-35.66c-.23-.93-2.1-1.76-2.51-.79-.3.7.79,9.42-.12,10.19-.39.33-9.91.26-10.23-.14-1.01-1.27.36-20.03-.43-22.99.28-.61.63-.78,1.26-.9,2.82-.55,16.86.02,19.26,1.4,3.91,2.25,4.1,9.39-.89,10.37ZM36.52,32.31c-.44.2-.55,4.61.2,4.78,3.12.69,2.46-6-.2-4.78Z"/>
+                    <path d="M60.36,46.68l-.05,32.24c-.25.4-8.79.52-9.33.3-.65-.26-.94-.76-.95-1.45l.24-49.15c.28-.49,8.95-.65,9.72-.41,1.05.32.16.98.96,1.2.19.05,2.52-1.25,3.67-1.38,2.31-.25,6.97.06,8.07,2.6.66,1.51.59,12.98.03,14.62-1.48,4.34-9.33,3.81-12.36,1.44ZM62.45,44.22c.44-.43.43-11.79-.03-12.2-.78-.7-1.83.13-2.05,1.12-.18.82-.2,9.23-.03,10.07.22,1.06,1.4,1.69,2.11,1Z"/>
+                    <path d="M136.56,28.92c.28.11.52.74.56,1.07.43,3.46-1.05,11.06-.19,14.16.44,1.6,2.21,1.16,2.39-.96.33-3.9-.67-9.72-.25-13.2.04-.34.31-1.07.61-1.07h9.6s.36.33.36.36v18.72c0,1.14-9.59,1.13-10.18.86-.3-.14,0-1.03-.5-1.22-.16-.06-2.29,1.18-3.22,1.33-2.64.43-7.79.07-8.78-3.01-.43-1.33-.68-14.61-.36-15.98.07-.29.28-1.07.61-1.07,1.48,0,8.63-.27,9.36,0Z"/>
+                    <path d="M111.72,39.48v4.92c0,.8,2.64.8,2.64,0v-3.84c0-.62,8.84-.37,9.84-.36v3.72c0,5.99-21.07,7.83-22.69-.11-.32-1.57-.33-8.06-.09-9.71,1.08-7.25,19.26-7.26,22.11-1.27.45.95,1.17,5.9.55,6.41-.7.58-10.61.18-12.37.24ZM113.58,32.82c-1.62-1.73-2.65,2.41-1.62,2.94,2.58,1.32,2.39-2.11,1.62-2.94Z"/>
+                    <path d="M160.47,72.4c1.69-1.14,2.86,2.51,1.18,3.22-2.25.94-1.44-3.04-1.18-3.22Z"/>
+                    <path d="M160.59,67.84c1.66-.79,2.45,1.83,1.29,2.49-1.7.97-2.26-2.03-1.29-2.49Z"/>
+                </svg>
+            </a>
+            <nav class="header__nav">
+                <a href="index.html" class="header__link">Головна</a>
+                <a href="tables.html" class="header__link header__link--active">Карта столів</a>
+                <a href="index.html#contacts" class="header__link">Контакти</a>
+            </nav>
+        </div>
+        <div class="header__right">
+            <a href="index.html#booking" class="header__btn">Бронювання</a>
+        </div>
+    </div>
+</header>
+
+<main class="tables-page">
+    <section class="tables-hero">
+        <h1 class="tables-hero__title">Карта столів</h1>
+        <p class="tables-hero__subtitle">Оберіть зону та стіл для бронювання</p>
+    </section>
+
+    <section class="tables-controls">
+        <div class="floor-switcher">
+            <button class="floor-btn active" data-floor="1">1 Поверх</button>
+            <button class="floor-btn" data-floor="2">2 Поверх (VIP)</button>
+        </div>
+        <div class="tables-legend">
+            <span class="legend-item"><span class="legend-dot legend-dot--free"></span> Вільний</span>
+            <span class="legend-item"><span class="legend-dot legend-dot--booked"></span> Заброньовано</span>
+            <span class="legend-item"><span class="legend-dot legend-dot--reserved"></span> Зарезервовано</span>
+        </div>
+    </section>
+
+    <section class="tables-map-wrapper">
+        <div class="tables-map" id="tablesMap">
+            <div class="tables-floor active" id="floor1"></div>
+            <div class="tables-floor" id="floor2"></div>
+        </div>
+    </section>
+
+    <div class="table-info-panel" id="tableInfoPanel">
+        <div class="table-info-panel__header">
+            <h3 id="tableInfoTitle">Стіл №1</h3>
+            <button class="table-info-panel__close" id="closePanel">&times;</button>
+        </div>
+        <div class="table-info-panel__body">
+            <p id="tableInfoZone">Зона: Стандарт</p>
+            <p id="tableInfoSeats">Місць: 4</p>
+            <p id="tableInfoStatus">Статус: Вільний</p>
+            <p id="tableInfoBooked" style="display:none">Заброньовано на: <span id="tableInfoBookedDetails"></span></p>
+        </div>
+        <div class="table-info-panel__actions">
+            <button class="table-btn table-btn--book" id="bookTableBtn" style="display:none">Забронювати</button>
+            <button class="table-btn table-btn--cancel" id="cancelBookBtn" style="display:none">Скасувати</button>
+        </div>
+    </div>
+</main>
+
+<div id="bookingModal" class="modal" style="display:none">
+    <div class="modal__content">
+        <div class="modal__header">
+            <h3>Бронювання стола</h3>
+            <button class="modal__close" id="closeModal">&times;</button>
+        </div>
+        <form id="tableBookingForm" class="modal__form">
+            <input type="hidden" id="bookTableId">
+            <div class="booking__form-group">
+                <label for="bookName">Ім'я</label>
+                <input type="text" id="bookName" placeholder="Ваше ім'я" required>
+                <span class="booking__error" id="bookNameError"></span>
+            </div>
+            <div class="booking__form-group">
+                <label for="bookPhone">Телефон</label>
+                <input type="tel" id="bookPhone" placeholder="+38 (0__) ___-__-__" required>
+                <span class="booking__error" id="bookPhoneError"></span>
+            </div>
+            <div class="booking__form-group">
+                <label for="bookDate">Дата</label>
+                <input type="text" id="bookDate" placeholder="ДД.ММ.РРРР" required>
+                <span class="booking__error" id="bookDateError"></span>
+            </div>
+            <div class="booking__form-group">
+                <label for="bookTime">Час</label>
+                <select id="bookTime" required>
+                    <option value="">Оберіть час</option>
+                    <option value="18:00">18:00</option>
+                    <option value="19:00">19:00</option>
+                    <option value="20:00">20:00</option>
+                    <option value="21:00">21:00</option>
+                    <option value="22:00">22:00</option>
+                    <option value="23:00">23:00</option>
+                </select>
+                <span class="booking__error" id="bookTimeError"></span>
+            </div>
+            <button type="submit" class="modal__submit" id="bookSubmitBtn">Забронювати</button>
+        </form>
+    </div>
+</div>
+
+<script src="tables.js"></script>
+</body>
+</html>
