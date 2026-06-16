@@ -70,7 +70,7 @@ function loadTableStatus() {
     var status = {};
     Object.keys(tablesConfig).forEach(function(floor) {
         tablesConfig[floor].tables.forEach(function(t) {
-            status[t.id] = { status: 'free', date: '', time: '', name: '', phone: '' };
+            status[t.id] = { status: 'free', date: '', time: '', name: '', phone: '', seats: 0 };
         });
     });
     return status;
@@ -128,7 +128,13 @@ function renderFloor(floorNum) {
         el.style.cssText = 'left:' + table.x + '%;top:' + table.y + '%;width:' + table.w + '%;height:' + table.h + '%;';
 
         var text = document.createElement('span');
-        text.textContent = table.seats > 0 ? table.seats : '';
+        if (table.seats > 0) {
+            var bookedSeats = status.seats || 0;
+            text.innerHTML = table.seats;
+            if (bookedSeats > 0) {
+                text.innerHTML += ' <span style="color:#ef4444;font-size:0.7em">(' + bookedSeats + ')</span>';
+            }
+        }
         el.appendChild(text);
 
         var label = document.createElement('span');
@@ -153,19 +159,24 @@ function showTableInfo(table) {
 
     document.getElementById('tableInfoTitle').textContent = table.label;
     document.getElementById('tableInfoZone').textContent = 'Зона: ' + (zoneConfig ? zoneConfig.name : table.zone) + ' (' + floorName + ')';
-    document.getElementById('tableInfoSeats').textContent = 'Місць: ' + table.seats;
+    var bookedSeats = status.seats || 0;
+    var availableSeats = table.seats - bookedSeats;
+    document.getElementById('tableInfoSeats').innerHTML = 'Місць: ' + table.seats + (bookedSeats > 0 ? ' <span style="color:#ef4444">(зайнято ' + bookedSeats + ')</span>' : '') + ' <span style="color:#10b981">(вільно ' + availableSeats + ')</span>';
 
     var bookBtn = document.getElementById('bookTableBtn');
     var cancelBtn = document.getElementById('cancelBookBtn');
     var bookedInfo = document.getElementById('tableInfoBooked');
 
-    if (status.status === 'free') {
-        document.getElementById('tableInfoStatus').textContent = 'Статус: Вільний';
-        document.getElementById('tableInfoStatus').style.color = '#10b981';
+    if (availableSeats > 0 && status.status !== 'booked') {
+        document.getElementById('tableInfoStatus').textContent = 'Статус: ' + (status.status === 'reserved' ? 'Частково заброньовано' : 'Вільний');
+        document.getElementById('tableInfoStatus').style.color = status.status === 'reserved' ? '#f59e0b' : '#10b981';
         bookBtn.style.display = 'block';
-        cancelBtn.style.display = 'none';
-        bookedInfo.style.display = 'none';
-    } else if (status.status === 'booked') {
+        cancelBtn.style.display = status.status === 'reserved' ? 'block' : 'none';
+        bookedInfo.style.display = status.status === 'reserved' ? 'block' : 'none';
+        if (bookedInfo.style.display === 'block') {
+            document.getElementById('tableInfoBookedDetails').textContent = status.date + ' ' + status.time + ' — ' + status.name + ' (' + bookedSeats + ' міс.)';
+        }
+    } else if (status.status === 'booked' || availableSeats === 0) {
         document.getElementById('tableInfoStatus').textContent = 'Статус: Заброньовано';
         document.getElementById('tableInfoStatus').style.color = '#ef4444';
         bookBtn.style.display = 'none';
@@ -192,6 +203,17 @@ function openBookingModal(table) {
     document.getElementById('tableInfoPanel').classList.remove('active');
     document.getElementById('bookingModal').style.display = 'flex';
 
+    var status = tableStatus[table.id] || { status: 'free', seats: 0 };
+    var available = table.seats - (status.seats || 0);
+    var guestsSelect = document.getElementById('bookGuests');
+    guestsSelect.innerHTML = '<option value="">Оберіть кількість</option>';
+    for (var i = 1; i <= available; i++) {
+        var opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = i + ' місце' + (i > 1 && i < 5 ? 'а' : i >= 5 ? 'ь' : '');
+        guestsSelect.appendChild(opt);
+    }
+
     if (isMiniApp && tg.initDataUnsafe.user) {
         var u = tg.initDataUnsafe.user;
         document.getElementById('bookName').value = u.first_name + (u.last_name ? ' ' + u.last_name : '');
@@ -206,6 +228,7 @@ function cancelBooking(table) {
         status.time = '';
         status.name = '';
         status.phone = '';
+        status.seats = 0;
         saveTableStatus(tableStatus);
         renderAll();
         showTableInfo(table);
@@ -278,12 +301,14 @@ document.getElementById('tableBookingForm').addEventListener('submit', function(
     var phone = document.getElementById('bookPhone').value;
     var date = document.getElementById('bookDate').value;
     var time = document.getElementById('bookTime').value;
+    var guests = parseInt(document.getElementById('bookGuests').value);
 
     if (name.length < 2) return;
     var phoneDigits = phone.replace(/\D/g, '');
     if (phoneDigits.length < 10) return;
     if (!date || date.length < 10) return;
     if (!time) return;
+    if (!guests || guests < 1) return;
 
     var table = null;
     Object.keys(tablesConfig).forEach(function(floor) {
@@ -293,7 +318,11 @@ document.getElementById('tableBookingForm').addEventListener('submit', function(
     });
     if (!table) return;
 
-    tableStatus[tableId] = { status: 'reserved', date: date, time: time, name: name, phone: phone };
+    var currentStatus = tableStatus[tableId] || { status: 'free', seats: 0 };
+    var currentSeats = currentStatus.seats || 0;
+    if (currentSeats + guests > table.seats) return;
+
+    tableStatus[tableId] = { status: 'reserved', date: date, time: time, name: name, phone: phone, seats: currentSeats + guests };
     saveTableStatus(tableStatus);
 
     var zoneLabels = { vip: 'VIP', standard: 'Стандарт', bar: 'Бар', lounge: 'Лаунж' };
@@ -310,7 +339,7 @@ document.getElementById('tableBookingForm').addEventListener('submit', function(
     msg += '📞 *Телефон:* ' + phone + '\n';
     msg += '📅 *Дата:* ' + date + '\n';
     msg += '🕐 *Час:* ' + time + '\n';
-    msg += '👥 *Місць:* ' + table.seats;
+    msg += '👥 *Заброньовано місць:* ' + guests + ' з ' + table.seats;
 
     var btn = document.getElementById('bookSubmitBtn');
     btn.textContent = 'Надсилаємо...';
