@@ -2,12 +2,42 @@ var tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : nu
 var isMiniApp = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
 var TG_BOT_TOKEN = '8841778405:AAGxnnq7rC_OqG8b4Po4ZuGur1o37XFs-Fg';
 var TG_CHAT_ID = '-1004472996150';
+var isAdmin = false;
 
 if (tg && isMiniApp) {
     tg.ready();
     tg.expand();
     tg.setHeaderColor('#0a0a0a');
     tg.setBackgroundColor('#0a0a0a');
+    checkAdmin(tg.initDataUnsafe.user.id);
+}
+
+function checkAdmin(userId) {
+    fetch('https://api.telegram.org/bot' + TG_BOT_TOKEN + '/getChatMember?chat_id=' + TG_CHAT_ID + '&user_id=' + userId)
+        .then(function(r) { return r.json(); })
+        .then(function(res) {
+            if (res.ok && res.result) {
+                var s = res.result.status;
+                isAdmin = (s === 'administrator' || s === 'creator' || s === 'member');
+            }
+            updateUI();
+        })
+        .catch(function() { isAdmin = false; updateUI(); });
+}
+
+function updateUI() {
+    document.querySelectorAll('.table-seat').forEach(function(el) {
+        if (!isAdmin) {
+            el.style.cursor = 'default';
+        }
+    });
+    var panel = document.getElementById('tableInfoPanel');
+    if (panel && !isAdmin) {
+        var bookBtn = document.getElementById('bookTableBtn');
+        var cancelBtn = document.getElementById('cancelBookBtn');
+        if (bookBtn) bookBtn.style.display = 'none';
+        if (cancelBtn) cancelBtn.style.display = 'none';
+    }
 }
 
 var STORAGE_KEY = 'orpheum_tables_data';
@@ -167,7 +197,7 @@ function showTableInfo(table) {
     var cancelBtn = document.getElementById('cancelBookBtn');
     var bookedInfo = document.getElementById('tableInfoBooked');
 
-    if (availableSeats > 0 && status.status !== 'booked') {
+    if (isAdmin && availableSeats > 0 && status.status !== 'booked') {
         document.getElementById('tableInfoStatus').textContent = 'Статус: ' + (status.status === 'reserved' ? 'Частково заброньовано' : 'Вільний');
         document.getElementById('tableInfoStatus').style.color = status.status === 'reserved' ? '#f59e0b' : '#10b981';
         bookBtn.style.display = 'block';
@@ -177,6 +207,22 @@ function showTableInfo(table) {
             document.getElementById('tableInfoBookedDetails').textContent = status.date + ' ' + status.time + ' — ' + status.name + ' (' + bookedSeats + ' міс.)';
         }
     } else if (status.status === 'booked' || availableSeats === 0) {
+        document.getElementById('tableInfoStatus').textContent = 'Статус: Заброньовано';
+        document.getElementById('tableInfoStatus').style.color = '#ef4444';
+        bookBtn.style.display = 'none';
+        cancelBtn.style.display = 'none';
+        bookedInfo.style.display = 'block';
+        document.getElementById('tableInfoBookedDetails').textContent = status.date + ' ' + status.time + ' — ' + status.name;
+    } else if (!isAdmin) {
+        document.getElementById('tableInfoStatus').textContent = 'Статус: ' + (status.status === 'reserved' ? 'Зарезервовано' : 'Вільний');
+        document.getElementById('tableInfoStatus').style.color = status.status === 'reserved' ? '#f59e0b' : '#10b981';
+        bookBtn.style.display = 'none';
+        cancelBtn.style.display = 'none';
+        bookedInfo.style.display = status.status === 'reserved' ? 'block' : 'none';
+        if (bookedInfo.style.display === 'block') {
+            document.getElementById('tableInfoBookedDetails').textContent = status.date + ' ' + status.time + ' — ' + status.name;
+        }
+    } else if (status.status === 'reserved') {
         document.getElementById('tableInfoStatus').textContent = 'Статус: Заброньовано';
         document.getElementById('tableInfoStatus').style.color = '#ef4444';
         bookBtn.style.display = 'none';
@@ -194,7 +240,10 @@ function showTableInfo(table) {
 
     panel.classList.add('active');
 
-    bookBtn.onclick = function() { openBookingModal(table); };
+    bookBtn.onclick = function() {
+        if (!isAdmin) return;
+        openBookingModal(table);
+    };
     cancelBtn.onclick = function() { cancelBooking(table); };
 }
 
@@ -238,6 +287,7 @@ function cancelBooking(table) {
 function renderAll() {
     renderFloor(1);
     renderFloor(2);
+    updateUI();
 }
 
 document.querySelectorAll('.floor-btn').forEach(function(btn) {
