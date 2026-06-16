@@ -21,30 +21,32 @@ var tablesConfig = {
         },
         tables: [
             { id: 'f1-b1', x: 0, y: 0, w: 14, h: 13, seats: 6, zone: 'vip', label: 'Г-банкетка 1', type: 'booth' },
-            { id: 'f1-t1', x: 28, y: 3, w: 12, h: 11, seats: 4, zone: 'standard', label: 'Стіл 1', type: 'tilted' },
-            { id: 'f1-t2', x: 60, y: 3, w: 12, h: 11, seats: 4, zone: 'standard', label: 'Стіл 2', type: 'tilted' },
             { id: 'f1-b2', x: 86, y: 0, w: 14, h: 13, seats: 6, zone: 'vip', label: 'Г-банкетка 2', type: 'booth' },
 
-            { id: 'f1-b3', x: 0, y: 18, w: 14, h: 18, seats: 8, zone: 'vip', label: 'Банкетка 3', type: 'booth' },
-            { id: 'f1-t3', x: 28, y: 20, w: 11, h: 11, seats: 4, zone: 'standard', label: 'Стіл 3', type: 'standard' },
-            { id: 'f1-t4', x: 61, y: 20, w: 11, h: 11, seats: 4, zone: 'standard', label: 'Стіл 4', type: 'standard' },
-            { id: 'f1-b4', x: 86, y: 18, w: 14, h: 18, seats: 8, zone: 'vip', label: 'Банкетка 4', type: 'booth' },
+            { id: 'f1-t1', x: 26, y: 4, w: 14, h: 12, seats: 4, zone: 'standard', label: 'Стіл 1', type: 'tilted' },
+            { id: 'f1-t2', x: 60, y: 4, w: 14, h: 12, seats: 4, zone: 'standard', label: 'Стіл 2', type: 'tilted' },
 
-            { id: 'f1-t5', x: 28, y: 38, w: 12, h: 11, seats: 4, zone: 'standard', label: 'Стіл 5', type: 'tilted' },
-            { id: 'f1-t6', x: 60, y: 38, w: 12, h: 11, seats: 4, zone: 'standard', label: 'Стіл 6', type: 'tilted' },
+            { id: 'f1-b3', x: 0, y: 20, w: 14, h: 20, seats: 8, zone: 'vip', label: 'Банкетка 3', type: 'booth' },
+            { id: 'f1-b4', x: 86, y: 20, w: 14, h: 20, seats: 8, zone: 'vip', label: 'Банкетка 4', type: 'booth' },
 
-            { id: 'f1-b5', x: 0, y: 44, w: 14, h: 13, seats: 6, zone: 'vip', label: 'Г-банкетка 5', type: 'booth' },
-            { id: 'f1-t7', x: 28, y: 46, w: 11, h: 10, seats: 4, zone: 'standard', label: 'Стіл 7', type: 'standard' },
-            { id: 'f1-t8', x: 61, y: 46, w: 11, h: 10, seats: 4, zone: 'standard', label: 'Стіл 8', type: 'standard' },
-            { id: 'f1-b6', x: 86, y: 44, w: 14, h: 13, seats: 6, zone: 'vip', label: 'Г-банкетка 6', type: 'booth' },
+            { id: 'f1-t3', x: 28, y: 24, w: 12, h: 12, seats: 4, zone: 'standard', label: 'Стіл 3', type: 'standard' },
+            { id: 'f1-t4', x: 60, y: 24, w: 12, h: 12, seats: 4, zone: 'standard', label: 'Стіл 4', type: 'standard' },
 
-            { id: 'f1-t9', x: 28, y: 60, w: 12, h: 11, seats: 4, zone: 'standard', label: 'Стіл 9', type: 'tilted' },
-            { id: 'f1-t10', x: 60, y: 60, w: 12, h: 11, seats: 4, zone: 'standard', label: 'Стіл 10', type: 'tilted' },
+            { id: 'f1-t5', x: 24, y: 44, w: 14, h: 12, seats: 4, zone: 'standard', label: 'Стіл 5', type: 'tilted' },
+            { id: 'f1-t6', x: 62, y: 44, w: 14, h: 12, seats: 4, zone: 'standard', label: 'Стіл 6', type: 'tilted' },
 
-            { id: 'f1-t11', x: 14, y: 74, w: 22, h: 8, seats: 8, zone: 'vip', label: 'Стіл 11', type: 'standard' },
-            { id: 'f1-t12', x: 64, y: 74, w: 22, h: 8, seats: 8, zone: 'vip', label: 'Стіл 12', type: 'standard' },
+            { id: 'f1-b5', x: 0, y: 48, w: 14, h: 13, seats: 6, zone: 'vip', label: 'Г-банкетка 5', type: 'booth' },
+            { id: 'f1-b6', x: 86, y: 48, w: 14, h: 13, seats: 6, zone: 'vip', label: 'Г-банкетка 6', type: 'booth' },
 
-            { id: 'f1-bar', x: 10, y: 92, w: 80, h: 4, seats: 0, zone: 'bar', label: '', type: 'decoration' }
+            { id: 'f1-t7', x: 28, y: 60, w: 12, h: 11, seats: 4, zone: 'standard', label: 'Стіл 7', type: 'tilted' },
+            { id: 'f1-t8', x: 60, y: 60, w: 12, h: 11, seats: 4, zone: 'standard', label: 'Стіл 8', type: 'tilted' },
+
+            { id: 'f1-t9', x: 22, y: 72, w: 12, h: 10, seats: 4, zone: 'standard', label: 'Стіл 9', type: 'tilted' },
+            { id: 'f1-t10', x: 38, y: 72, w: 12, h: 10, seats: 4, zone: 'standard', label: 'Стіл 10', type: 'tilted' },
+            { id: 'f1-t11', x: 52, y: 72, w: 12, h: 10, seats: 4, zone: 'standard', label: 'Стіл 11', type: 'tilted' },
+            { id: 'f1-t12', x: 66, y: 72, w: 12, h: 10, seats: 4, zone: 'standard', label: 'Стіл 12', type: 'tilted' },
+
+            { id: 'f1-bar', x: 10, y: 90, w: 80, h: 4, seats: 0, zone: 'bar', label: 'Бар', type: 'decoration' }
         ]
     },
     floor2: {
@@ -101,7 +103,7 @@ function renderFloor(floorNum) {
     if (floorNum === 1) {
         var entrance = document.createElement('div');
         entrance.className = 'entrance';
-        entrance.style.cssText = 'right:0;bottom:18%;left:auto;transform:none;width:40px;height:40px;border-radius:8px 0 0 8px;';
+        entrance.style.cssText = 'right:0;bottom:20%;left:auto;transform:none;width:40px;height:40px;border-radius:8px 0 0 8px;';
         entrance.textContent = 'Вхід';
         container.appendChild(entrance);
     }
