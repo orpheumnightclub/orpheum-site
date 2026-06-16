@@ -182,18 +182,6 @@
 /* Bar */
 .table-seat--bar {
     border-radius: 4px;
-    background: rgba(90, 138, 32, 0.3);
-    border: 2px solid #5a8a20;
-    cursor: default;
-}
-
-.table-seat--bar .table-seat__label {
-    font-size: 0.7rem;
-    color: #5a8a20;
-    bottom: auto;
-    top: 50%;
-    transform: translateY(-50%);
-    position: absolute;
 }
 
 /* Tilted table */

@@ -83,9 +83,7 @@ function loadTableStatus() {
     var status = {};
     Object.keys(tablesConfig).forEach(function(floor) {
         tablesConfig[floor].tables.forEach(function(t) {
-            if (t.seats > 0) {
-                status[t.id] = { status: 'free', date: '', time: '', name: '', phone: '' };
-            }
+            status[t.id] = { status: 'free', date: '', time: '', name: '', phone: '' };
         });
     });
     return status;
@@ -105,18 +103,9 @@ function renderFloor(floorNum) {
     if (floorNum === 1) {
         var entrance = document.createElement('div');
         entrance.className = 'entrance';
-        entrance.style.cssText = 'right:0;bottom:0;left:auto;transform:none;width:40px;height:40px;border-radius:8px 0 0 0;';
+        entrance.style.cssText = 'right:0;bottom:12%;left:auto;transform:none;width:40px;height:40px;border-radius:8px 0 0 8px;';
         entrance.textContent = 'Вхід';
         container.appendChild(entrance);
-
-        var wallLine = document.createElement('div');
-        wallLine.style.cssText = 'position:absolute;left:0;top:83%;width:100%;height:1px;background:#5a8a20;opacity:0.5;';
-        container.appendChild(wallLine);
-
-        var wallLabel = document.createElement('div');
-        wallLabel.style.cssText = 'position:absolute;right:8px;top:81%;font-family:Montserrat,sans-serif;font-size:0.55rem;color:#5a8a20;text-transform:uppercase;letter-spacing:2px;pointer-events:none;';
-        wallLabel.textContent = 'Стіна';
-        container.appendChild(wallLabel);
     }
 
     if (floorNum === 2) {
@@ -174,13 +163,7 @@ function showTableInfo(table) {
     var cancelBtn = document.getElementById('cancelBookBtn');
     var bookedInfo = document.getElementById('tableInfoBooked');
 
-    if (table.seats === 0) {
-        bookBtn.style.display = 'none';
-        cancelBtn.style.display = 'none';
-        bookedInfo.style.display = 'none';
-        document.getElementById('tableInfoStatus').textContent = 'Барна стійка';
-        document.getElementById('tableInfoStatus').style.color = '#5a8a20';
-    } else if (status.status === 'free') {
+    if (status.status === 'free') {
         document.getElementById('tableInfoStatus').textContent = 'Статус: Вільний';
         document.getElementById('tableInfoStatus').style.color = '#10b981';
         bookBtn.style.display = 'block';
