@@ -23,8 +23,8 @@ var tablesConfig = {
             { id: 'f1-b1', x: 0, y: 0, w: 14, h: 13, seats: 6, zone: 'vip', label: 'Г-банкетка 1', type: 'booth' },
             { id: 'f1-b2', x: 86, y: 0, w: 14, h: 13, seats: 6, zone: 'vip', label: 'Г-банкетка 2', type: 'booth' },
 
-            { id: 'f1-t1', x: 26, y: 4, w: 14, h: 12, seats: 4, zone: 'standard', label: 'Стіл 1', type: 'tilted' },
-            { id: 'f1-t2', x: 60, y: 4, w: 14, h: 12, seats: 4, zone: 'standard', label: 'Стіл 2', type: 'tilted' },
+            { id: 'f1-t1', x: 28, y: 4, w: 13, h: 12, seats: 4, zone: 'standard', label: 'Стіл 1', type: 'tilted' },
+            { id: 'f1-t2', x: 59, y: 4, w: 13, h: 12, seats: 4, zone: 'standard', label: 'Стіл 2', type: 'tilted' },
 
             { id: 'f1-b3', x: 0, y: 20, w: 14, h: 20, seats: 8, zone: 'vip', label: 'Банкетка 3', type: 'booth' },
             { id: 'f1-b4', x: 86, y: 20, w: 14, h: 20, seats: 8, zone: 'vip', label: 'Банкетка 4', type: 'booth' },
@@ -32,45 +32,32 @@ var tablesConfig = {
             { id: 'f1-t3', x: 28, y: 24, w: 12, h: 12, seats: 4, zone: 'standard', label: 'Стіл 3', type: 'standard' },
             { id: 'f1-t4', x: 60, y: 24, w: 12, h: 12, seats: 4, zone: 'standard', label: 'Стіл 4', type: 'standard' },
 
-            { id: 'f1-t5', x: 24, y: 44, w: 14, h: 12, seats: 4, zone: 'standard', label: 'Стіл 5', type: 'tilted' },
-            { id: 'f1-t6', x: 62, y: 44, w: 14, h: 12, seats: 4, zone: 'standard', label: 'Стіл 6', type: 'tilted' },
+            { id: 'f1-t5', x: 26, y: 46, w: 13, h: 12, seats: 4, zone: 'standard', label: 'Стіл 5', type: 'tilted' },
+            { id: 'f1-t6', x: 61, y: 46, w: 13, h: 12, seats: 4, zone: 'standard', label: 'Стіл 6', type: 'tilted' },
 
             { id: 'f1-b5', x: 0, y: 48, w: 14, h: 13, seats: 6, zone: 'vip', label: 'Г-банкетка 5', type: 'booth' },
             { id: 'f1-b6', x: 86, y: 48, w: 14, h: 13, seats: 6, zone: 'vip', label: 'Г-банкетка 6', type: 'booth' },
 
-            { id: 'f1-t7', x: 28, y: 60, w: 12, h: 11, seats: 4, zone: 'standard', label: 'Стіл 7', type: 'tilted' },
-            { id: 'f1-t8', x: 60, y: 60, w: 12, h: 11, seats: 4, zone: 'standard', label: 'Стіл 8', type: 'tilted' },
+            { id: 'f1-t7', x: 36, y: 68, w: 12, h: 10, seats: 4, zone: 'standard', label: 'Стіл 7', type: 'tilted' },
+            { id: 'f1-t8', x: 52, y: 68, w: 12, h: 10, seats: 4, zone: 'standard', label: 'Стіл 8', type: 'tilted' },
 
-            { id: 'f1-t9', x: 22, y: 72, w: 12, h: 10, seats: 4, zone: 'standard', label: 'Стіл 9', type: 'tilted' },
-            { id: 'f1-t10', x: 38, y: 72, w: 12, h: 10, seats: 4, zone: 'standard', label: 'Стіл 10', type: 'tilted' },
-            { id: 'f1-t11', x: 52, y: 72, w: 12, h: 10, seats: 4, zone: 'standard', label: 'Стіл 11', type: 'tilted' },
-            { id: 'f1-t12', x: 66, y: 72, w: 12, h: 10, seats: 4, zone: 'standard', label: 'Стіл 12', type: 'tilted' },
+            { id: 'f1-t9', x: 18, y: 80, w: 24, h: 8, seats: 8, zone: 'vip', label: 'Стіл 9', type: 'standard' },
+            { id: 'f1-t10', x: 58, y: 80, w: 24, h: 8, seats: 8, zone: 'vip', label: 'Стіл 10', type: 'standard' },
 
-            { id: 'f1-bar', x: 10, y: 90, w: 80, h: 4, seats: 0, zone: 'bar', label: 'Бар', type: 'decoration' }
+            { id: 'f1-bar', x: 10, y: 92, w: 80, h: 4, seats: 0, zone: 'bar', label: 'Бар', type: 'decoration' }
         ]
     },
     floor2: {
         zones: {
-            vip: { name: 'VIP', color: '#5a8a20' },
-            lounge: { name: 'Лаунж', color: '#8b5cf6' }
+            vip: { name: 'VIP', color: '#5a8a20' }
         },
         tables: [
-            { id: 'f2-v1', x: 5, y: 5, w: 16, h: 12, seats: 10, zone: 'vip', label: 'VIP 1', type: 'booth' },
-            { id: 'f2-v2', x: 79, y: 5, w: 16, h: 12, seats: 10, zone: 'vip', label: 'VIP 2', type: 'booth' },
-            { id: 'f2-v3', x: 5, y: 78, w: 16, h: 12, seats: 10, zone: 'vip', label: 'VIP 3', type: 'booth' },
-            { id: 'f2-v4', x: 79, y: 78, w: 16, h: 12, seats: 10, zone: 'vip', label: 'VIP 4', type: 'booth' },
+            { id: 'f2-t4', x: 0, y: 44, w: 14, h: 18, seats: 8, zone: 'vip', label: 'VIP 4', type: 'booth' },
+            { id: 'f2-t5', x: 0, y: 22, w: 14, h: 14, seats: 6, zone: 'vip', label: 'VIP 5', type: 'booth' },
+            { id: 'f2-t6', x: 0, y: 0, w: 14, h: 18, seats: 8, zone: 'vip', label: 'VIP 6', type: 'booth' },
 
-            { id: 'f2-l1', x: 30, y: 10, w: 10, h: 10, seats: 4, zone: 'lounge', label: 'Лаунж 1', type: 'round' },
-            { id: 'f2-l2', x: 60, y: 10, w: 10, h: 10, seats: 4, zone: 'lounge', label: 'Лаунж 2', type: 'round' },
-            { id: 'f2-l3', x: 30, y: 35, w: 10, h: 10, seats: 4, zone: 'lounge', label: 'Лаунж 3', type: 'round' },
-            { id: 'f2-l4', x: 60, y: 35, w: 10, h: 10, seats: 4, zone: 'lounge', label: 'Лаунж 4', type: 'round' },
-
-            { id: 'f2-l5', x: 15, y: 55, w: 10, h: 10, seats: 6, zone: 'lounge', label: 'Лаунж 5', type: 'round' },
-            { id: 'f2-l6', x: 45, y: 55, w: 10, h: 10, seats: 6, zone: 'lounge', label: 'Лаунж 6', type: 'round' },
-            { id: 'f2-l7', x: 75, y: 55, w: 10, h: 10, seats: 6, zone: 'lounge', label: 'Лаунж 7', type: 'round' },
-
-            { id: 'f2-l8', x: 30, y: 78, w: 10, h: 10, seats: 4, zone: 'lounge', label: 'Лаунж 8', type: 'round' },
-            { id: 'f2-l9', x: 60, y: 78, w: 10, h: 10, seats: 4, zone: 'lounge', label: 'Лаунж 9', type: 'round' }
+            { id: 'f2-t2', x: 0, y: 86, w: 35, h: 14, seats: 6, zone: 'vip', label: 'VIP 2', type: 'booth' },
+            { id: 'f2-t3', x: 40, y: 86, w: 35, h: 14, seats: 8, zone: 'vip', label: 'VIP 3', type: 'booth' }
         ]
     }
 };
@@ -109,15 +96,15 @@ function renderFloor(floorNum) {
     }
 
     if (floorNum === 2) {
-        var stageArea = document.createElement('div');
-        stageArea.className = 'dance-floor';
-        stageArea.style.cssText = 'left:30%;top:42%;width:40%;height:16%;';
-        stageArea.textContent = 'Лаунж зона';
-        container.appendChild(stageArea);
+        var entrance2 = document.createElement('div');
+        entrance2.className = 'entrance';
+        entrance2.style.cssText = 'right:0;bottom:20%;left:auto;transform:none;width:40px;height:40px;border-radius:8px 0 0 8px;';
+        entrance2.textContent = 'Вхід';
+        container.appendChild(entrance2);
 
         var staircase = document.createElement('div');
         staircase.className = 'staircase';
-        staircase.style.cssText = 'left:44%;bottom:2%;width:12%;height:4%;';
+        staircase.style.cssText = 'right:0;bottom:10%;left:auto;transform:none;width:40px;height:30px;';
         staircase.textContent = 'Сходи';
         container.appendChild(staircase);
     }
