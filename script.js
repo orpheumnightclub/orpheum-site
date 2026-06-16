@@ -2,7 +2,7 @@
 var tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
 var isMiniApp = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
 var TG_BOT_TOKEN = '8841778405:AAGxnnq7rC_OqG8b4Po4ZuGur1o37XFs-Fg';
-var TG_CHAT_ID = '-1003831593831';
+var TG_CHAT_ID = '-1004472996150';
 
 // ===== Init Telegram Mini App =====
 if (tg && isMiniApp) {
