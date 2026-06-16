@@ -20,30 +20,33 @@ var tablesConfig = {
             bar: { name: 'Бар', color: '#5a8a20' }
         },
         tables: [
-            { id: 'f1-b1', x: 0, y: 0, w: 14, h: 14, seats: 6, zone: 'vip', label: 'Г-банкетка 1', type: 'booth' },
-            { id: 'f1-t1', x: 20, y: 5, w: 12, h: 11, seats: 4, zone: 'standard', label: 'Стіл 1', type: 'tilted' },
-            { id: 'f1-b2', x: 86, y: 0, w: 14, h: 14, seats: 6, zone: 'vip', label: 'Г-банкетка 2', type: 'booth' },
-            { id: 'f1-t2', x: 68, y: 5, w: 12, h: 11, seats: 4, zone: 'standard', label: 'Стіл 2', type: 'tilted' },
+            { id: 'f1-b1', x: 0, y: 0, w: 14, h: 13, seats: 6, zone: 'vip', label: 'Г-банкетка 1', type: 'booth' },
+            { id: 'f1-t1', x: 28, y: 3, w: 12, h: 11, seats: 4, zone: 'standard', label: 'Стіл 1', type: 'tilted' },
+            { id: 'f1-t2', x: 60, y: 3, w: 12, h: 11, seats: 4, zone: 'standard', label: 'Стіл 2', type: 'tilted' },
+            { id: 'f1-b2', x: 86, y: 0, w: 14, h: 13, seats: 6, zone: 'vip', label: 'Г-банкетка 2', type: 'booth' },
 
-            { id: 'f1-b3', x: 0, y: 20, w: 14, h: 18, seats: 8, zone: 'vip', label: 'Банкетка 3', type: 'booth' },
-            { id: 'f1-t3', x: 20, y: 24, w: 11, h: 11, seats: 4, zone: 'standard', label: 'Стіл 3', type: 'standard' },
-            { id: 'f1-b4', x: 86, y: 20, w: 14, h: 18, seats: 8, zone: 'vip', label: 'Банкетка 4', type: 'booth' },
-            { id: 'f1-t4', x: 69, y: 24, w: 11, h: 11, seats: 4, zone: 'standard', label: 'Стіл 4', type: 'standard' },
+            { id: 'f1-b3', x: 0, y: 18, w: 14, h: 18, seats: 8, zone: 'vip', label: 'Банкетка 3', type: 'booth' },
+            { id: 'f1-t3', x: 28, y: 20, w: 11, h: 11, seats: 4, zone: 'standard', label: 'Стіл 3', type: 'standard' },
+            { id: 'f1-t4', x: 61, y: 20, w: 11, h: 11, seats: 4, zone: 'standard', label: 'Стіл 4', type: 'standard' },
+            { id: 'f1-b4', x: 86, y: 18, w: 14, h: 18, seats: 8, zone: 'vip', label: 'Банкетка 4', type: 'booth' },
 
-            { id: 'f1-t5', x: 20, y: 44, w: 12, h: 11, seats: 4, zone: 'standard', label: 'Стіл 5', type: 'tilted' },
-            { id: 'f1-t6', x: 68, y: 44, w: 12, h: 11, seats: 4, zone: 'standard', label: 'Стіл 6', type: 'tilted' },
+            { id: 'f1-t5', x: 28, y: 38, w: 12, h: 11, seats: 4, zone: 'standard', label: 'Стіл 5', type: 'tilted' },
+            { id: 'f1-t6', x: 60, y: 38, w: 12, h: 11, seats: 4, zone: 'standard', label: 'Стіл 6', type: 'tilted' },
 
-            { id: 'f1-b5', x: 0, y: 48, w: 14, h: 14, seats: 6, zone: 'vip', label: 'Г-банкетка 5', type: 'booth' },
-            { id: 'f1-b6', x: 86, y: 48, w: 14, h: 14, seats: 6, zone: 'vip', label: 'Г-банкетка 6', type: 'booth' },
+            { id: 'f1-b5', x: 0, y: 44, w: 14, h: 13, seats: 6, zone: 'vip', label: 'Г-банкетка 5', type: 'booth' },
+            { id: 'f1-t7', x: 28, y: 46, w: 11, h: 10, seats: 4, zone: 'standard', label: 'Стіл 7', type: 'standard' },
+            { id: 'f1-t8', x: 61, y: 46, w: 11, h: 10, seats: 4, zone: 'standard', label: 'Стіл 8', type: 'standard' },
+            { id: 'f1-b6', x: 86, y: 44, w: 14, h: 13, seats: 6, zone: 'vip', label: 'Г-банкетка 6', type: 'booth' },
 
-            { id: 'f1-t7', x: 22, y: 62, w: 12, h: 11, seats: 4, zone: 'standard', label: 'Стіл 7', type: 'tilted' },
-            { id: 'f1-t8', x: 66, y: 62, w: 12, h: 11, seats: 4, zone: 'standard', label: 'Стіл 8', type: 'tilted' },
+            { id: 'f1-t9', x: 28, y: 60, w: 12, h: 11, seats: 4, zone: 'standard', label: 'Стіл 9', type: 'tilted' },
+            { id: 'f1-t10', x: 60, y: 60, w: 12, h: 11, seats: 4, zone: 'standard', label: 'Стіл 10', type: 'tilted' },
 
-            { id: 'f1-t9', x: 34, y: 76, w: 13, h: 10, seats: 4, zone: 'standard', label: 'Стіл 9', type: 'standard' },
-            { id: 'f1-t10', x: 53, y: 76, w: 13, h: 10, seats: 4, zone: 'standard', label: 'Стіл 10', type: 'standard' },
+            { id: 'f1-t11', x: 14, y: 74, w: 22, h: 8, seats: 8, zone: 'vip', label: 'Стіл 11', type: 'standard' },
+            { id: 'f1-t12', x: 64, y: 74, w: 22, h: 8, seats: 8, zone: 'vip', label: 'Стіл 12', type: 'standard' },
 
-            { id: 'f1-bar1', x: 16, y: 90, w: 30, h: 5, seats: 8, zone: 'bar', label: 'Бар-стійка 1', type: 'bar' },
-            { id: 'f1-bar2', x: 54, y: 90, w: 30, h: 5, seats: 8, zone: 'bar', label: 'Бар-стійка 2', type: 'bar' }
+            { id: 'f1-bar', x: 10, y: 86, w: 80, h: 5, seats: 0, zone: 'bar', label: 'Барна стійка', type: 'bar' },
+
+            { id: 'f1-wall', x: 0, y: 83, w: 100, h: 0, seats: 0, zone: 'bar', label: '', type: 'wall' }
         ]
     },
     floor2: {
@@ -80,7 +83,9 @@ function loadTableStatus() {
     var status = {};
     Object.keys(tablesConfig).forEach(function(floor) {
         tablesConfig[floor].tables.forEach(function(t) {
-            status[t.id] = { status: 'free', date: '', time: '', name: '', phone: '' };
+            if (t.seats > 0) {
+                status[t.id] = { status: 'free', date: '', time: '', name: '', phone: '' };
+            }
         });
     });
     return status;
@@ -97,23 +102,21 @@ function renderFloor(floorNum) {
     container.innerHTML = '';
     var floor = tablesConfig['floor' + floorNum];
 
-    var entrance = document.createElement('div');
-    entrance.className = 'entrance';
-    entrance.textContent = 'Вхід';
-    container.appendChild(entrance);
-
     if (floorNum === 1) {
-        var danceFloor = document.createElement('div');
-        danceFloor.className = 'dance-floor';
-        danceFloor.style.cssText = 'left:30%;top:40%;width:40%;height:20%;';
-        danceFloor.textContent = 'Танцпол';
-        container.appendChild(danceFloor);
+        var entrance = document.createElement('div');
+        entrance.className = 'entrance';
+        entrance.style.cssText = 'right:0;bottom:0;left:auto;transform:none;width:40px;height:40px;border-radius:8px 0 0 0;';
+        entrance.textContent = 'Вхід';
+        container.appendChild(entrance);
 
-        var barArea = document.createElement('div');
-        barArea.className = 'bar-area';
-        barArea.style.cssText = 'left:25%;bottom:2%;width:50%;height:5%;';
-        barArea.textContent = 'Бар';
-        container.appendChild(barArea);
+        var wallLine = document.createElement('div');
+        wallLine.style.cssText = 'position:absolute;left:0;top:83%;width:100%;height:1px;background:#5a8a20;opacity:0.5;';
+        container.appendChild(wallLine);
+
+        var wallLabel = document.createElement('div');
+        wallLabel.style.cssText = 'position:absolute;right:8px;top:81%;font-family:Montserrat,sans-serif;font-size:0.55rem;color:#5a8a20;text-transform:uppercase;letter-spacing:2px;pointer-events:none;';
+        wallLabel.textContent = 'Стіна';
+        container.appendChild(wallLabel);
     }
 
     if (floorNum === 2) {
@@ -131,6 +134,8 @@ function renderFloor(floorNum) {
     }
 
     floor.tables.forEach(function(table) {
+        if (table.type === 'wall') return;
+
         var el = document.createElement('div');
         var status = tableStatus[table.id] || { status: 'free' };
         el.className = 'table-seat table-seat--' + table.type + ' ' + status.status;
@@ -138,7 +143,7 @@ function renderFloor(floorNum) {
         el.style.cssText = 'left:' + table.x + '%;top:' + table.y + '%;width:' + table.w + '%;height:' + table.h + '%;';
 
         var text = document.createElement('span');
-        text.textContent = table.seats;
+        text.textContent = table.seats > 0 ? table.seats : '';
         el.appendChild(text);
 
         var label = document.createElement('span');
@@ -169,7 +174,13 @@ function showTableInfo(table) {
     var cancelBtn = document.getElementById('cancelBookBtn');
     var bookedInfo = document.getElementById('tableInfoBooked');
 
-    if (status.status === 'free') {
+    if (table.seats === 0) {
+        bookBtn.style.display = 'none';
+        cancelBtn.style.display = 'none';
+        bookedInfo.style.display = 'none';
+        document.getElementById('tableInfoStatus').textContent = 'Барна стійка';
+        document.getElementById('tableInfoStatus').style.color = '#5a8a20';
+    } else if (status.status === 'free') {
         document.getElementById('tableInfoStatus').textContent = 'Статус: Вільний';
         document.getElementById('tableInfoStatus').style.color = '#10b981';
         bookBtn.style.display = 'block';
