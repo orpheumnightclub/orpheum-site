@@ -417,6 +417,8 @@ function openBookingModal(table) {
     document.getElementById('tableInfoPanel').classList.remove('active');
     document.getElementById('bookingModal').style.display = 'flex';
 
+    populateDatePickers();
+
     var available = table.seats - calcTableReserved(table.id) - calcTableSold(table.id);
     var guestsSelect = document.getElementById('bookGuests');
     guestsSelect.innerHTML = '<option value="">Оберіть кількість</option>';
@@ -588,16 +590,57 @@ if (phoneInput) {
 }
 
 var dateInput = document.getElementById('bookDate');
-if (dateInput) {
-    dateInput.addEventListener('input', function(e) {
-        var digits = e.target.value.replace(/\D/g, '');
-        if (digits.length === 0) { e.target.value = ''; return; }
-        var f = digits.substring(0, 2);
-        if (digits.length > 2) f += '.' + digits.substring(2, 4);
-        if (digits.length > 4) f += '.' + digits.substring(4, 8);
-        e.target.value = f;
-    });
+var bookDay = document.getElementById('bookDay');
+var bookMonth = document.getElementById('bookMonth');
+var bookYear = document.getElementById('bookYear');
+var monthNames = ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень', 'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'];
+
+function padZero(n) { return n < 10 ? '0' + n : '' + n; }
+
+function populateDatePickers() {
+    var now = new Date();
+    var curYear = now.getFullYear();
+    bookYear.innerHTML = '<option value="">Рік</option>';
+    for (var y = curYear; y <= curYear + 1; y++) {
+        var o = document.createElement('option');
+        o.value = y; o.textContent = y;
+        bookYear.appendChild(o);
+    }
+    bookMonth.innerHTML = '<option value="">Місяць</option>';
+    for (var m = 1; m <= 12; m++) {
+        var o = document.createElement('option');
+        o.value = padZero(m); o.textContent = monthNames[m - 1];
+        bookMonth.appendChild(o);
+    }
+    updateDays();
 }
+
+function updateDays() {
+    var y = parseInt(bookYear.value) || 2026;
+    var m = parseInt(bookMonth.value) || 1;
+    var dim = new Date(y, m, 0).getDate();
+    var curDay = bookDay.value;
+    bookDay.innerHTML = '<option value="">День</option>';
+    for (var d = 1; d <= dim; d++) {
+        var o = document.createElement('option');
+        o.value = padZero(d); o.textContent = d;
+        bookDay.appendChild(o);
+    }
+    if (curDay && parseInt(curDay) <= dim) bookDay.value = curDay;
+    updateHiddenDate();
+}
+
+function updateHiddenDate() {
+    if (bookDay.value && bookMonth.value && bookYear.value) {
+        dateInput.value = bookDay.value + '.' + bookMonth.value + '.' + bookYear.value;
+    } else {
+        dateInput.value = '';
+    }
+}
+
+if (bookDay) bookDay.addEventListener('change', updateHiddenDate);
+if (bookMonth) bookMonth.addEventListener('change', function() { updateDays(); updateHiddenDate(); });
+if (bookYear) bookYear.addEventListener('change', function() { updateDays(); updateHiddenDate(); });
 
 document.getElementById('tableBookingForm').addEventListener('submit', function(e) {
     e.preventDefault();

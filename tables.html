@@ -105,20 +105,35 @@
                 <span class="booking__error" id="bookPhoneError"></span>
             </div>
             <div class="booking__form-group">
-                <label for="bookDate">Дата</label>
-                <input type="text" id="bookDate" placeholder="ДД.ММ.РРРР" required>
+                <label>Дата</label>
+                <div style="display:flex;gap:8px;">
+                    <select id="bookDay" required style="flex:1;padding:10px;background:#222;border:1px solid #444;border-radius:8px;color:#fff;font-family:'Montserrat',sans-serif;">
+                        <option value="">День</option>
+                    </select>
+                    <select id="bookMonth" required style="flex:1.5;padding:10px;background:#222;border:1px solid #444;border-radius:8px;color:#fff;font-family:'Montserrat',sans-serif;">
+                        <option value="">Місяць</option>
+                    </select>
+                    <select id="bookYear" required style="flex:1;padding:10px;background:#222;border:1px solid #444;border-radius:8px;color:#fff;font-family:'Montserrat',sans-serif;">
+                        <option value="">Рік</option>
+                    </select>
+                </div>
+                <input type="hidden" id="bookDate">
                 <span class="booking__error" id="bookDateError"></span>
             </div>
             <div class="booking__form-group">
                 <label for="bookTime">Час</label>
                 <select id="bookTime" required>
                     <option value="">Оберіть час</option>
-                    <option value="18:00">18:00</option>
-                    <option value="19:00">19:00</option>
-                    <option value="20:00">20:00</option>
-                    <option value="21:00">21:00</option>
                     <option value="22:00">22:00</option>
                     <option value="23:00">23:00</option>
+                    <option value="00:00">00:00</option>
+                    <option value="01:00">01:00</option>
+                    <option value="02:00">02:00</option>
+                    <option value="03:00">03:00</option>
+                    <option value="04:00">04:00</option>
+                    <option value="05:00">05:00</option>
+                    <option value="06:00">06:00</option>
+                    <option value="07:00">07:00</option>
                 </select>
                 <span class="booking__error" id="bookTimeError"></span>
             </div>
@@ -155,6 +170,6 @@
 
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-    <script src="tables.js?v=8"></script>
+    <script src="tables.js?v=9"></script>
 </body>
 </html>
