@@ -91,6 +91,7 @@
 .legend-dot--free { background: #10b981; }
 .legend-dot--booked { background: #ef4444; }
 .legend-dot--reserved { background: #f59e0b; }
+.legend-dot--sold { background: #8b5cf6; }
 
 .tables-map-wrapper {
     max-width: 1000px;
@@ -151,6 +152,11 @@
 .table-seat.reserved {
     background: rgba(245, 158, 11, 0.6);
     border: 2px solid #f59e0b;
+}
+
+.table-seat.sold {
+    background: rgba(139, 92, 246, 0.6);
+    border: 2px solid #8b5cf6;
 }
 
 .table-seat.selected {
@@ -356,6 +362,30 @@
 
 .table-btn--cancel:hover {
     background: #dc2626;
+}
+
+.table-btn--sell {
+    background: #8b5cf6;
+    color: #fff;
+}
+
+.table-btn--sell:hover {
+    background: #7c3aed;
+}
+
+.table-btn--close-shift {
+    background: #f59e0b;
+    color: #000;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.table-btn--close-shift:hover {
+    background: #d97706;
 }
 
 /* ===== Modal ===== */

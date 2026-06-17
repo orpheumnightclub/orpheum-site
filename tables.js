@@ -46,10 +46,20 @@ function updateUI() {
     var panel = document.getElementById('tableInfoPanel');
     if (panel && !isAdmin) {
         var bookBtn = document.getElementById('bookTableBtn');
+        var sellBtn = document.getElementById('sellTableBtn');
         var cancelBtn = document.getElementById('cancelBookBtn');
         if (bookBtn) bookBtn.style.display = 'none';
+        if (sellBtn) sellBtn.style.display = 'none';
         if (cancelBtn) cancelBtn.style.display = 'none';
     }
+    var closeShiftBtn = document.getElementById('closeShiftBtn');
+    if (closeShiftBtn) closeShiftBtn.style.display = isAdmin ? 'block' : 'none';
+}
+
+function renderAll() {
+    renderFloor(1);
+    renderFloor(2);
+    updateUI();
 }
 
 var tablesConfig = {
@@ -234,48 +244,35 @@ function showTableInfo(table) {
     document.getElementById('tableInfoSeats').innerHTML = 'Місць: ' + table.seats + (bookedSeats > 0 ? ' <span style="color:#ef4444">(зайнято ' + bookedSeats + ')</span>' : '') + ' <span style="color:#10b981">(вільно ' + availableSeats + ')</span>';
 
     var bookBtn = document.getElementById('bookTableBtn');
+    var sellBtn = document.getElementById('sellTableBtn');
     var cancelBtn = document.getElementById('cancelBookBtn');
     var bookedInfo = document.getElementById('tableInfoBooked');
 
-    if (isAdmin && availableSeats > 0 && status.status !== 'booked') {
-        document.getElementById('tableInfoStatus').textContent = 'Статус: ' + (status.status === 'reserved' ? 'Частково заброньовано' : 'Вільний');
-        document.getElementById('tableInfoStatus').style.color = status.status === 'reserved' ? '#f59e0b' : '#10b981';
-        bookBtn.style.display = 'block';
-        cancelBtn.style.display = status.status === 'reserved' ? 'block' : 'none';
-        bookedInfo.style.display = status.status === 'reserved' ? 'block' : 'none';
-        if (bookedInfo.style.display === 'block') {
-            document.getElementById('tableInfoBookedDetails').textContent = status.date + ' ' + status.time + ' — ' + status.name + ' (' + bookedSeats + ' міс.)';
-        }
-    } else if (status.status === 'booked' || availableSeats === 0) {
-        document.getElementById('tableInfoStatus').textContent = 'Статус: Заброньовано';
-        document.getElementById('tableInfoStatus').style.color = '#ef4444';
-        bookBtn.style.display = 'none';
-        cancelBtn.style.display = 'none';
+    bookBtn.style.display = 'none';
+    sellBtn.style.display = 'none';
+    cancelBtn.style.display = 'none';
+    bookedInfo.style.display = 'none';
+
+    if (status.status === 'sold') {
+        document.getElementById('tableInfoStatus').textContent = 'Статус: Продано';
+        document.getElementById('tableInfoStatus').style.color = '#8b5cf6';
         bookedInfo.style.display = 'block';
-        document.getElementById('tableInfoBookedDetails').textContent = status.date + ' ' + status.time + ' — ' + status.name;
-    } else if (!isAdmin) {
-        document.getElementById('tableInfoStatus').textContent = 'Статус: ' + (status.status === 'reserved' ? 'Зарезервовано' : 'Вільний');
-        document.getElementById('tableInfoStatus').style.color = status.status === 'reserved' ? '#f59e0b' : '#10b981';
-        bookBtn.style.display = 'none';
-        cancelBtn.style.display = 'none';
-        bookedInfo.style.display = status.status === 'reserved' ? 'block' : 'none';
-        if (bookedInfo.style.display === 'block') {
-            document.getElementById('tableInfoBookedDetails').textContent = status.date + ' ' + status.time + ' — ' + status.name;
-        }
-    } else if (status.status === 'reserved') {
-        document.getElementById('tableInfoStatus').textContent = 'Статус: Заброньовано';
-        document.getElementById('tableInfoStatus').style.color = '#ef4444';
-        bookBtn.style.display = 'none';
-        cancelBtn.style.display = 'none';
-        bookedInfo.style.display = 'block';
-        document.getElementById('tableInfoBookedDetails').textContent = status.date + ' ' + status.time + ' — ' + status.name;
+        document.getElementById('tableInfoBookedDetails').textContent = status.date + ' ' + status.time + ' — ' + status.name + ' — ' + (status.amount || 0) + ' грн';
     } else if (status.status === 'reserved') {
         document.getElementById('tableInfoStatus').textContent = 'Статус: Зарезервовано';
         document.getElementById('tableInfoStatus').style.color = '#f59e0b';
-        bookBtn.style.display = 'none';
-        cancelBtn.style.display = 'block';
         bookedInfo.style.display = 'block';
-        document.getElementById('tableInfoBookedDetails').textContent = status.date + ' ' + status.time + ' — ' + status.name;
+        document.getElementById('tableInfoBookedDetails').textContent = status.date + ' ' + status.time + ' — ' + status.name + ' (' + bookedSeats + ' міс.)';
+        if (isAdmin) {
+            sellBtn.style.display = 'block';
+            cancelBtn.style.display = 'block';
+        }
+    } else if (status.status === 'free') {
+        document.getElementById('tableInfoStatus').textContent = 'Статус: Вільний';
+        document.getElementById('tableInfoStatus').style.color = '#10b981';
+        if (isAdmin) {
+            bookBtn.style.display = 'block';
+        }
     }
 
     panel.classList.add('active');
@@ -283,6 +280,10 @@ function showTableInfo(table) {
     bookBtn.onclick = function() {
         if (!isAdmin) return;
         openBookingModal(table);
+    };
+    sellBtn.onclick = function() {
+        if (!isAdmin) return;
+        openSellModal(table);
     };
     cancelBtn.onclick = function() { cancelBooking(table); };
 }
@@ -323,11 +324,110 @@ function cancelBooking(table) {
     }
 }
 
-function renderAll() {
-    renderFloor(1);
-    renderFloor(2);
-    updateUI();
+function openSellModal(table) {
+    document.getElementById('sellTableId').value = table.id;
+    var status = tableStatus[table.id] || {};
+    var floorName = table.id.startsWith('f1') ? '1 поверх' : '2 поверх';
+    document.getElementById('sellTableInfo').textContent = table.label + ' (' + floorName + ') — ' + (status.seats || 0) + ' міс.';
+    document.getElementById('sellAmount').value = '';
+    document.getElementById('tableInfoPanel').classList.remove('active');
+    document.getElementById('sellModal').style.display = 'flex';
 }
+
+document.getElementById('closeSellModal').addEventListener('click', function() {
+    document.getElementById('sellModal').style.display = 'none';
+});
+
+document.getElementById('sellModal').addEventListener('click', function(e) {
+    if (e.target === this) this.style.display = 'none';
+});
+
+document.getElementById('sellForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var tableId = document.getElementById('sellTableId').value;
+    var amount = parseInt(document.getElementById('sellAmount').value);
+    if (!tableId || !amount || amount < 1) return;
+
+    var status = tableStatus[tableId] || {};
+    var sellerName = '';
+    if (isMiniApp && tg.initDataUnsafe.user) {
+        var u = tg.initDataUnsafe.user;
+        sellerName = u.first_name + (u.last_name ? ' ' + u.last_name : '');
+    }
+
+    var update = {};
+    update[tableId + '/status'] = 'sold';
+    update[tableId + '/amount'] = amount;
+    update[tableId + '/soldBy'] = sellerName;
+    update[tableId + '/soldAt'] = Date.now();
+    db.ref('tables').update(update);
+
+    db.ref('sales').push({
+        tableId: tableId,
+        tableLabel: findTableLabel(tableId),
+        zone: status.zone || '',
+        date: status.date || '',
+        time: status.time || '',
+        name: status.name || '',
+        phone: status.phone || '',
+        seats: status.seats || 0,
+        amount: amount,
+        soldBy: sellerName,
+        soldAt: Date.now()
+    });
+
+    document.getElementById('sellModal').style.display = 'none';
+    document.getElementById('sellAmount').value = '';
+});
+
+function findTableLabel(tableId) {
+    var label = tableId;
+    Object.keys(tablesConfig).forEach(function(floor) {
+        tablesConfig[floor].tables.forEach(function(t) {
+            if (t.id === tableId) label = t.label;
+        });
+    });
+    return label;
+}
+
+function closeShift() {
+    db.ref('sales').once('value').then(function(snap) {
+        var sales = snap.val() || {};
+        var keys = Object.keys(sales);
+        if (keys.length === 0) {
+            alert('Немає продаж за цю зміну');
+            return;
+        }
+
+        var total = 0;
+        var items = '';
+        keys.forEach(function(k, i) {
+            var s = sales[k];
+            total += s.amount || 0;
+            items += (i + 1) + '. ' + (s.tableLabel || s.tableId) + ' — ' + (s.amount || 0) + ' грн' + (s.soldBy ? ' (' + s.soldBy + ')' : '') + '\n';
+        });
+
+        var msg = '📊 *Звіт по зміні*\n\n' +
+            items + '\n' +
+            '💰 *Загалом:* ' + total + ' грн\n' +
+            '📋 *Продаж:* ' + keys.length;
+
+        fetch('https://api.telegram.org/bot' + TG_BOT_TOKEN + '/sendMessage', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: TG_CHAT_ID, text: msg, parse_mode: 'Markdown' })
+        }).then(function() {
+            db.ref('sales').remove();
+            alert('Звіт надіслано в групу!');
+        });
+    });
+}
+
+document.getElementById('closeShiftBtn').addEventListener('click', function() {
+    if (confirm('Надіслати звіт по зміні в групу?')) {
+        closeShift();
+    }
+});
 
 document.querySelectorAll('.floor-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {

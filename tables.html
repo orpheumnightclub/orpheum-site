@@ -57,7 +57,9 @@
             <span class="legend-item"><span class="legend-dot legend-dot--free"></span> Вільний</span>
             <span class="legend-item"><span class="legend-dot legend-dot--booked"></span> Заброньовано</span>
             <span class="legend-item"><span class="legend-dot legend-dot--reserved"></span> Зарезервовано</span>
+            <span class="legend-item"><span class="legend-dot legend-dot--sold"></span> Продано</span>
         </div>
+        <button class="table-btn table-btn--close-shift" id="closeShiftBtn" style="display:none">Закрити зміну</button>
     </section>
 
     <section class="tables-map-wrapper">
@@ -80,6 +82,7 @@
         </div>
         <div class="table-info-panel__actions">
             <button class="table-btn table-btn--book" id="bookTableBtn" style="display:none">Забронювати</button>
+            <button class="table-btn table-btn--sell" id="sellTableBtn" style="display:none">Продати</button>
             <button class="table-btn table-btn--cancel" id="cancelBookBtn" style="display:none">Скасувати</button>
         </div>
     </div>
@@ -133,8 +136,26 @@
     </div>
 </div>
 
+<div id="sellModal" class="modal" style="display:none">
+    <div class="modal__content">
+        <div class="modal__header">
+            <h3>Продаж стола</h3>
+            <button class="modal__close" id="closeSellModal">&times;</button>
+        </div>
+        <form id="sellForm" class="modal__form">
+            <input type="hidden" id="sellTableId">
+            <p id="sellTableInfo" style="color:#aaa;margin-bottom:16px"></p>
+            <div class="booking__form-group">
+                <label for="sellAmount">Сума (грн)</label>
+                <input type="number" id="sellAmount" placeholder="0" min="1" required>
+            </div>
+            <button type="submit" class="modal__submit" id="sellSubmitBtn" style="background:#5a8a20">Підтвердити продаж</button>
+        </form>
+    </div>
+</div>
+
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-    <script src="tables.js?v=4"></script>
+    <script src="tables.js?v=5"></script>
 </body>
 </html>
