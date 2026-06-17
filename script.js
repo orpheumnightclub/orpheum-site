@@ -1,3 +1,16 @@
+// ===== Firebase init =====
+var firebaseConfig = {
+    apiKey: "AIzaSyAty51T9ZL89zPrT0WOyeBptEep604Vdd4",
+    authDomain: "orpheum-1a815.firebaseapp.com",
+    databaseURL: "https://orpheum-1a815-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "orpheum-1a815",
+    storageBucket: "orpheum-1a815.firebasestorage.app",
+    messagingSenderId: "459230463541",
+    appId: "1:459230463541:web:c7615d494a0395e13cd37c"
+};
+firebase.initializeApp(firebaseConfig);
+var db = firebase.database();
+
 // ===== Telegram detection =====
 var tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
 var isMiniApp = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
@@ -196,10 +209,40 @@ if (bookingForm) {
         btn.textContent = 'Надсилаємо...';
         btn.disabled = true;
 
-        fetch('https://api.telegram.org/bot' + TG_BOT_TOKEN + '/sendMessage', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: TG_CHAT_ID, text: msg, parse_mode: 'Markdown' })
+        var pendingRef = db.ref('pending_bookings').push();
+        var pendingId = pendingRef.key;
+        var tgUserId = (isMiniApp && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id : null;
+        var tgUsername = (isMiniApp && tg.initDataUnsafe.user) ? (tg.initDataUnsafe.user.username || '') : '';
+
+        pendingRef.set({
+            name: data.name.trim(),
+            phone: data.phone,
+            date: data.date,
+            guests: data.guests,
+            zone: data.zone,
+            tgUserId: tgUserId,
+            tgUsername: tgUsername,
+            createdAt: Date.now()
+        }).then(function() {
+            var inlineKeyboard = {
+                inline_keyboard: [
+                    [
+                        { text: '✅ Одобрити', callback_data: 'approve_' + pendingId },
+                        { text: '❌ Скасувати', callback_data: 'cancel_' + pendingId }
+                    ]
+                ]
+            };
+
+            return fetch('https://api.telegram.org/bot' + TG_BOT_TOKEN + '/sendMessage', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: TG_CHAT_ID,
+                    text: msg,
+                    parse_mode: 'Markdown',
+                    reply_markup: inlineKeyboard
+                })
+            });
         })
         .then(function(r) { return r.json(); })
         .then(function(res) {
