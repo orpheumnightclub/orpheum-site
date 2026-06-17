@@ -260,15 +260,41 @@ function renderFloor(floorNum) {
         var el = document.createElement('div');
         var displayStatus = getTableDisplayStatus(table.id);
         var bookedSeats = calcTableReserved(table.id);
+        var soldSeats = calcTableSold(table.id);
+        var totalSeats = table.seats || 1;
+        var freeSeats = totalSeats - bookedSeats - soldSeats;
+
+        var soldPct = Math.round((soldSeats / totalSeats) * 100);
+        var reservedPct = Math.round((bookedSeats / totalSeats) * 100);
+        var freePct = 100 - soldPct - reservedPct;
+
+        var gradient = 'linear-gradient(to right';
+        var pos = 0;
+        if (soldPct > 0) {
+            gradient += ', #8b5cf6 ' + pos + '%, #8b5cf6 ' + (pos + soldPct) + '%';
+            pos += soldPct;
+        }
+        if (reservedPct > 0) {
+            gradient += ', #f59e0b ' + pos + '%, #f59e0b ' + (pos + reservedPct) + '%';
+            pos += reservedPct;
+        }
+        if (freePct > 0) {
+            gradient += ', #10b981 ' + pos + '%, #10b981 ' + (pos + freePct) + '%';
+        }
+        gradient += ')';
+
         el.className = 'table-seat table-seat--' + table.type + ' ' + displayStatus;
         el.dataset.id = table.id;
-        el.style.cssText = 'left:' + table.x + '%;top:' + table.y + '%;width:' + table.w + '%;height:' + table.h + '%;';
+        el.style.cssText = 'left:' + table.x + '%;top:' + table.y + '%;width:' + table.w + '%;height:' + table.h + '%;background:' + gradient + ';border:2px solid ' + (soldPct === 100 ? '#8b5cf6' : reservedPct > 0 ? '#f59e0b' : '#10b981') + ';';
 
         var text = document.createElement('span');
         if (table.seats > 0) {
             text.innerHTML = table.seats;
-            if (bookedSeats > 0) {
-                text.innerHTML += ' <span style="color:#ef4444;font-size:0.7em">(' + bookedSeats + ')</span>';
+            if (bookedSeats > 0 || soldSeats > 0) {
+                var parts = [];
+                if (soldSeats > 0) parts.push('<span style="color:#c4b5fd">' + soldSeats + '</span>');
+                if (bookedSeats > 0) parts.push('<span style="color:#fde68a">' + bookedSeats + '</span>');
+                text.innerHTML += ' (' + parts.join('/') + ')';
             }
         }
         el.appendChild(text);

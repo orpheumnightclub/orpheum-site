@@ -141,7 +141,6 @@ function markOk(fieldId) {
 function validateName() {
     var v = document.getElementById('name').value.trim();
     if (v.length < 2) { showError('name', 'Мінімум 2 символи'); return false; }
-    if (!/^[a-zA-Zа-яА-ЯіІїЇєЄґҐ\-\s']+$/.test(v)) { showError('name', 'Тільки літери, дефіс або апостроф'); return false; }
     clearError('name'); markOk('name'); return true;
 }
 
