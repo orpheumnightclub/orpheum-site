@@ -1,3 +1,15 @@
+var firebaseConfig = {
+    apiKey: "AIzaSyAty51T9ZL89zPrT0WOyeBptEep604Vdd4",
+    authDomain: "orpheum-1a815.firebaseapp.com",
+    databaseURL: "https://orpheum-1a815-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "orpheum-1a815",
+    storageBucket: "orpheum-1a815.firebasestorage.app",
+    messagingSenderId: "459230463541",
+    appId: "1:459230463541:web:c7615d494a0395e13cd37c"
+};
+firebase.initializeApp(firebaseConfig);
+var db = firebase.database();
+
 var tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
 var isMiniApp = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
 var TG_BOT_TOKEN = '8841778405:AAGxnnq7rC_OqG8b4Po4ZuGur1o37XFs-Fg';
@@ -39,8 +51,6 @@ function updateUI() {
         if (cancelBtn) cancelBtn.style.display = 'none';
     }
 }
-
-var STORAGE_KEY = 'orpheum_tables_data';
 
 var tablesConfig = {
     floor1: {
@@ -93,24 +103,52 @@ var tablesConfig = {
 };
 
 function loadTableStatus() {
-    try {
-        var data = localStorage.getItem(STORAGE_KEY);
-        if (data) return JSON.parse(data);
-    } catch(e) {}
-    var status = {};
-    Object.keys(tablesConfig).forEach(function(floor) {
-        tablesConfig[floor].tables.forEach(function(t) {
-            status[t.id] = { status: 'free', date: '', time: '', name: '', phone: '', seats: 0 };
+    return new Promise(function(resolve) {
+        db.ref('tables').once('value').then(function(snapshot) {
+            var data = snapshot.val();
+            if (data) { resolve(data); return; }
+            var status = {};
+            Object.keys(tablesConfig).forEach(function(floor) {
+                tablesConfig[floor].tables.forEach(function(t) {
+                    status[t.id] = { status: 'free', date: '', time: '', name: '', phone: '', seats: 0 };
+                });
+            });
+            db.ref('tables').set(status);
+            resolve(status);
+        }).catch(function() {
+            var status = {};
+            Object.keys(tablesConfig).forEach(function(floor) {
+                tablesConfig[floor].tables.forEach(function(t) {
+                    status[t.id] = { status: 'free', date: '', time: '', name: '', phone: '', seats: 0 };
+                });
+            });
+            resolve(status);
         });
     });
-    return status;
 }
 
 function saveTableStatus(status) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(status));
+    return db.ref('tables').set(status);
 }
 
-var tableStatus = loadTableStatus();
+function listenTableStatus(callback) {
+    db.ref('tables').on('value', function(snapshot) {
+        var data = snapshot.val();
+        if (data) callback(data);
+    });
+}
+
+var tableStatus = {};
+
+loadTableStatus().then(function(data) {
+    tableStatus = data;
+    renderAll();
+});
+
+listenTableStatus(function(data) {
+    tableStatus = data;
+    renderAll();
+});
 
 function renderFloor(floorNum) {
     var container = document.getElementById('floor' + floorNum);
@@ -272,15 +310,14 @@ function openBookingModal(table) {
 function cancelBooking(table) {
     var status = tableStatus[table.id];
     if (status) {
-        status.status = 'free';
-        status.date = '';
-        status.time = '';
-        status.name = '';
-        status.phone = '';
-        status.seats = 0;
-        saveTableStatus(tableStatus);
-        renderAll();
-        showTableInfo(table);
+        var update = {};
+        update[table.id + '/status'] = 'free';
+        update[table.id + '/date'] = '';
+        update[table.id + '/time'] = '';
+        update[table.id + '/name'] = '';
+        update[table.id + '/phone'] = '';
+        update[table.id + '/seats'] = 0;
+        db.ref('tables').update(update);
     }
 }
 
@@ -372,8 +409,15 @@ document.getElementById('tableBookingForm').addEventListener('submit', function(
     var currentSeats = currentStatus.seats || 0;
     if (currentSeats + guests > table.seats) return;
 
-    tableStatus[tableId] = { status: 'reserved', date: date, time: time, name: name, phone: phone, seats: currentSeats + guests };
-    saveTableStatus(tableStatus);
+    var newSeats = currentSeats + guests;
+    var update = {};
+    update[tableId + '/status'] = 'reserved';
+    update[tableId + '/date'] = date;
+    update[tableId + '/time'] = time;
+    update[tableId + '/name'] = name;
+    update[tableId + '/phone'] = phone;
+    update[tableId + '/seats'] = newSeats;
+    db.ref('tables').update(update);
 
     var zoneLabels = { vip: 'VIP', standard: 'Стандарт', bar: 'Бар', lounge: 'Лаунж' };
     var floorName = tableId.startsWith('f1') ? '1 поверх' : '2 поверх';
@@ -411,7 +455,7 @@ document.getElementById('tableBookingForm').addEventListener('submit', function(
                 btn.style.background = '';
                 btn.disabled = false;
                 document.getElementById('tableBookingForm').reset();
-                renderAll();
+// renderAll is called after Firebase loads data
             }, 1500);
         } else { throw new Error(); }
     })
