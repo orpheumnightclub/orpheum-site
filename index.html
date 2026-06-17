@@ -281,21 +281,38 @@
                         <span class="booking__form-error" id="dateError"></span>
                     </div>
                     <div class="booking__form-group">
-                        <label for="guests">Кількість гостей</label>
-                        <select id="guests" name="guests">
-                            <option value="1-2">1-2 особи</option>
-                            <option value="3-5">3-5 осіб</option>
-                            <option value="6-10" selected>6-10 осіб</option>
-                            <option value="10+">10+ осіб</option>
+                        <label for="bookFloor">Поверх</label>
+                        <select id="bookFloor" name="floor">
+                            <option value="1">1 поверх</option>
+                            <option value="2">2 поверх (VIP)</option>
                         </select>
                     </div>
                     <div class="booking__form-group">
-                        <label for="zone">Зона</label>
-                        <select id="zone" name="zone">
-                            <option value="standard">Стандарт</option>
-                            <option value="vip">VIP-зона</option>
-                            <option value="vvip">VVIP-зона</option>
+                        <label for="bookTableSelect">Стіл</label>
+                        <select id="bookTableSelect" name="tableId" required>
+                            <option value="">Спочатку оберіть поверх</option>
                         </select>
+                        <span class="booking__form-error" id="bookTableSelectError"></span>
+                    </div>
+                    <div class="booking__form-group">
+                        <label for="bookTime">Час</label>
+                        <select id="bookTime" name="time" required>
+                            <option value="">Оберіть час</option>
+                            <option value="22:00">22:00</option>
+                            <option value="23:00">23:00</option>
+                            <option value="00:00">00:00</option>
+                            <option value="01:00">01:00</option>
+                            <option value="02:00">02:00</option>
+                            <option value="03:00">03:00</option>
+                        </select>
+                        <span class="booking__form-error" id="bookTimeError"></span>
+                    </div>
+                    <div class="booking__form-group">
+                        <label for="bookSeats">Кількість місць</label>
+                        <select id="bookSeats" name="seats" required>
+                            <option value="">Спочатку оберіть стіл</option>
+                        </select>
+                        <span class="booking__form-error" id="bookSeatsError"></span>
                     </div>
                     <button type="submit" class="booking__form-btn" id="submitBtn">Надіслати заявку</button>
                 </div>

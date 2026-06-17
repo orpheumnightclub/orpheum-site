@@ -102,6 +102,8 @@ var tablesConfig = {
     }
 };
 
+db.ref('tables_config').set(tablesConfig);
+
 function loadTableStatus() {
     return new Promise(function(resolve) {
         db.ref('tables').once('value').then(function(snapshot) {

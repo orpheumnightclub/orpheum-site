@@ -169,6 +169,111 @@ function validateDate() {
     clearError('date'); markOk('date'); return true;
 }
 
+// ===== Table loading from Firebase =====
+var tablesConfig = {};
+
+function loadTablesConfig() {
+    return db.ref('tables_config').once('value').then(function(snap) {
+        var data = snap.val();
+        if (data) { tablesConfig = data; return; }
+        tablesConfig = {
+            floor1: {
+                zones: { vip: { name: 'VIP' }, standard: { name: 'Стандарт' }, bar: { name: 'Бар' } },
+                tables: [
+                    { id: 'f1-b1', seats: 6, zone: 'vip', label: 'Г-банкетка 1', type: 'booth' },
+                    { id: 'f1-b2', seats: 6, zone: 'vip', label: 'Г-банкетка 2', type: 'booth' },
+                    { id: 'f1-t1', seats: 4, zone: 'standard', label: 'Стіл 1', type: 'tilted' },
+                    { id: 'f1-t2', seats: 4, zone: 'standard', label: 'Стіл 2', type: 'tilted' },
+                    { id: 'f1-b3', seats: 8, zone: 'vip', label: 'Банкетка 3', type: 'booth' },
+                    { id: 'f1-b4', seats: 8, zone: 'vip', label: 'Банкетка 4', type: 'booth' },
+                    { id: 'f1-t3', seats: 4, zone: 'standard', label: 'Стіл 3', type: 'standard' },
+                    { id: 'f1-t4', seats: 4, zone: 'standard', label: 'Стіл 4', type: 'standard' },
+                    { id: 'f1-t5', seats: 4, zone: 'standard', label: 'Стіл 5', type: 'tilted' },
+                    { id: 'f1-t6', seats: 4, zone: 'standard', label: 'Стіл 6', type: 'tilted' },
+                    { id: 'f1-b5', seats: 6, zone: 'vip', label: 'Г-банкетка 5', type: 'booth' },
+                    { id: 'f1-b6', seats: 6, zone: 'vip', label: 'Г-банкетка 6', type: 'booth' },
+                    { id: 'f1-t7', seats: 4, zone: 'standard', label: 'Стіл 7', type: 'tilted' },
+                    { id: 'f1-t8', seats: 4, zone: 'standard', label: 'Стіл 8', type: 'tilted' },
+                    { id: 'f1-t9', seats: 8, zone: 'vip', label: 'Стіл 9', type: 'standard' },
+                    { id: 'f1-t10', seats: 8, zone: 'vip', label: 'Стіл 10', type: 'standard' }
+                ]
+            },
+            floor2: {
+                zones: { vip: { name: 'VIP' } },
+                tables: [
+                    { id: 'f2-t4', seats: 8, zone: 'vip', label: 'VIP 4', type: 'booth' },
+                    { id: 'f2-t5', seats: 6, zone: 'vip', label: 'VIP 5', type: 'booth' },
+                    { id: 'f2-t6', seats: 8, zone: 'vip', label: 'VIP 6', type: 'booth' },
+                    { id: 'f2-t2', seats: 6, zone: 'vip', label: 'VIP 2', type: 'booth' },
+                    { id: 'f2-t3', seats: 8, zone: 'vip', label: 'VIP 3', type: 'booth' }
+                ]
+            }
+        };
+        return db.ref('tables_config').set(tablesConfig);
+    });
+}
+
+function populateTableSelect(floorNum) {
+    var tableSelect = document.getElementById('bookTableSelect');
+    var seatsSelect = document.getElementById('bookSeats');
+    tableSelect.innerHTML = '<option value="">Оберіть стіл</option>';
+    seatsSelect.innerHTML = '<option value="">Спочатку оберіть стіл</option>';
+
+    var floorKey = 'floor' + floorNum;
+    var floor = tablesConfig[floorKey];
+    if (!floor) return;
+
+    var statusData = {};
+    db.ref('tables').once('value').then(function(snap) {
+        statusData = snap.val() || {};
+
+        floor.tables.forEach(function(t) {
+            if (t.type === 'decoration' || t.type === 'wall') return;
+            var st = statusData[t.id] || { status: 'free', seats: 0 };
+            var booked = st.seats || 0;
+            var available = t.seats - booked;
+            if (available <= 0) return;
+
+            var zoneConfig = floor.zones[t.zone];
+            var zoneName = zoneConfig ? zoneConfig.name : t.zone;
+            var opt = document.createElement('option');
+            opt.value = t.id;
+            opt.textContent = t.label + ' (' + zoneName + ', вільно ' + available + '/' + t.seats + ')';
+            opt.dataset.maxSeats = available;
+            tableSelect.appendChild(opt);
+        });
+    });
+}
+
+var bookFloorSelect = document.getElementById('bookFloor');
+var bookTableSelect = document.getElementById('bookTableSelect');
+var bookSeatsSelect = document.getElementById('bookSeats');
+
+if (bookFloorSelect) {
+    bookFloorSelect.addEventListener('change', function() {
+        populateTableSelect(this.value);
+        bookSeatsSelect.innerHTML = '<option value="">Спочатку оберіть стіл</option>';
+    });
+}
+
+if (bookTableSelect) {
+    bookTableSelect.addEventListener('change', function() {
+        var opt = this.options[this.selectedIndex];
+        var maxSeats = parseInt(opt.dataset.maxSeats) || 0;
+        bookSeatsSelect.innerHTML = '<option value="">Оберіть кількість</option>';
+        for (var i = 1; i <= maxSeats; i++) {
+            var s = document.createElement('option');
+            s.value = i;
+            s.textContent = i + ' місце' + (i > 1 && i < 5 ? 'а' : i >= 5 ? 'ь' : '');
+            bookSeatsSelect.appendChild(s);
+        }
+    });
+}
+
+loadTablesConfig().then(function() {
+    if (bookFloorSelect) populateTableSelect(bookFloorSelect.value);
+});
+
 var nameEl = document.getElementById('name');
 var phoneEl = document.getElementById('phone');
 var dateEl = document.getElementById('date');
@@ -190,8 +295,23 @@ if (bookingForm) {
 
         var formData = new FormData(bookingForm);
         var data = Object.fromEntries(formData.entries());
-        var zoneLabels = { standard: 'Стандарт', vip: 'VIP', vvip: 'VVIP' };
-        var guestLabels = { '1-2': '1-2 особи', '3-5': '3-5 осіб', '6-10': '6-10 осіб', '10+': '10+ осіб' };
+
+        if (!data.tableId) { showError('bookTableSelect', 'Оберіть стіл'); return; }
+        if (!data.time) { showError('bookTime', 'Оберіть час'); return; }
+        if (!data.seats) { showError('bookSeats', 'Оберіть кількість місць'); return; }
+
+        var tableInfo = null;
+        var floorKey = 'floor' + data.floor;
+        if (tablesConfig[floorKey]) {
+            tablesConfig[floorKey].tables.forEach(function(t) {
+                if (t.id === data.tableId) tableInfo = t;
+            });
+        }
+        if (!tableInfo) return;
+
+        var floorName = data.floor === '1' ? '1 поверх' : '2 поверх (VIP)';
+        var zoneConfig = tablesConfig[floorKey] && tablesConfig[floorKey].zones[tableInfo.zone];
+        var zoneName = zoneConfig ? zoneConfig.name : tableInfo.zone;
 
         var msg = '🎾 *Нова заявка на бронювання*\n\n';
         if (isMiniApp && tg.initDataUnsafe.user) {
@@ -201,8 +321,10 @@ if (bookingForm) {
         msg += '👤 *Ім\'я:* ' + data.name.trim() + '\n';
         msg += '📞 *Телефон:* ' + data.phone + '\n';
         msg += '📅 *Дата:* ' + data.date + '\n';
-        msg += '👥 *Гості:* ' + (guestLabels[data.guests] || data.guests) + '\n';
-        msg += '💎 *Зона:* ' + (zoneLabels[data.zone] || data.zone);
+        msg += '🕐 *Час:* ' + data.time + '\n';
+        msg += '🪑 *Стіл:* ' + tableInfo.label + ' (' + floorName + ')\n';
+        msg += '💎 *Зона:* ' + zoneName + '\n';
+        msg += '👥 *Місць:* ' + data.seats + ' з ' + tableInfo.seats;
 
         var btn = document.getElementById('submitBtn');
         var originalText = btn.textContent;
@@ -218,8 +340,12 @@ if (bookingForm) {
             name: data.name.trim(),
             phone: data.phone,
             date: data.date,
-            guests: data.guests,
-            zone: data.zone,
+            time: data.time,
+            tableId: data.tableId,
+            tableLabel: tableInfo.label,
+            zone: tableInfo.zone,
+            floor: data.floor,
+            seats: parseInt(data.seats),
             tgUserId: tgUserId,
             tgUsername: tgUsername,
             createdAt: Date.now()
@@ -251,6 +377,8 @@ if (bookingForm) {
                 btn.style.background = '#10b981';
                 bookingForm.reset();
                 document.querySelectorAll('.booking__form-group').forEach(function(g) { g.classList.remove('success', 'error'); });
+                bookSeatsSelect.innerHTML = '<option value="">Спочатку оберіть стіл</option>';
+                if (bookFloorSelect) populateTableSelect(bookFloorSelect.value);
                 if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
                 if (isMiniApp) setTimeout(function() { tg.close(); }, 2000);
             } else { throw new Error(); }
