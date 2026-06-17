@@ -82,8 +82,6 @@
         </div>
         <div class="table-info-panel__actions">
             <button class="table-btn table-btn--book" id="bookTableBtn" style="display:none">Забронювати</button>
-            <button class="table-btn table-btn--sell" id="sellTableBtn" style="display:none">Продати</button>
-            <button class="table-btn table-btn--cancel" id="cancelBookBtn" style="display:none">Скасувати</button>
         </div>
     </div>
 </main>
@@ -144,6 +142,7 @@
         </div>
         <form id="sellForm" class="modal__form">
             <input type="hidden" id="sellTableId">
+            <input type="hidden" id="sellReservationId">
             <p id="sellTableInfo" style="color:#aaa;margin-bottom:16px"></p>
             <div class="booking__form-group">
                 <label for="sellAmount">Сума (грн)</label>
@@ -156,6 +155,6 @@
 
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-    <script src="tables.js?v=5"></script>
+    <script src="tables.js?v=6"></script>
 </body>
 </html>

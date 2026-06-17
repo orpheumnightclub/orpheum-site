@@ -68,11 +68,7 @@ function updateUI() {
     var panel = document.getElementById('tableInfoPanel');
     if (panel && !isAdmin) {
         var bookBtn = document.getElementById('bookTableBtn');
-        var sellBtn = document.getElementById('sellTableBtn');
-        var cancelBtn = document.getElementById('cancelBookBtn');
         if (bookBtn) bookBtn.style.display = 'none';
-        if (sellBtn) sellBtn.style.display = 'none';
-        if (cancelBtn) cancelBtn.style.display = 'none';
     }
     var closeShiftBtn = document.getElementById('closeShiftBtn');
     if (closeShiftBtn) closeShiftBtn.style.display = isAdmin ? 'block' : 'none';
@@ -92,8 +88,8 @@ var tablesConfig = {
             bar: { name: 'Бар', color: '#5a8a20' }
         },
         tables: [
-            { id: 'f1-b1', x: 0, y: 0, w: 14, h: 13, seats: 6, zone: 'vip', label: 'Г-банкетка 1', type: 'booth' },
-            { id: 'f1-b2', x: 86, y: 0, w: 14, h: 13, seats: 6, zone: 'vip', label: 'Г-банкетка 2', type: 'booth' },
+            { id: 'f1-b1', x: 0, y: 0, w: 14, h: 13, seats: 6, zone: 'vip', label: 'Банкетка 1', type: 'booth' },
+            { id: 'f1-b2', x: 86, y: 0, w: 14, h: 13, seats: 6, zone: 'vip', label: 'Банкетка 2', type: 'booth' },
 
             { id: 'f1-t1', x: 28, y: 4, w: 13, h: 12, seats: 4, zone: 'standard', label: 'Стіл 1', type: 'tilted' },
             { id: 'f1-t2', x: 59, y: 4, w: 13, h: 12, seats: 4, zone: 'standard', label: 'Стіл 2', type: 'tilted' },
@@ -107,8 +103,8 @@ var tablesConfig = {
             { id: 'f1-t5', x: 26, y: 46, w: 13, h: 12, seats: 4, zone: 'standard', label: 'Стіл 5', type: 'tilted' },
             { id: 'f1-t6', x: 61, y: 46, w: 13, h: 12, seats: 4, zone: 'standard', label: 'Стіл 6', type: 'tilted' },
 
-            { id: 'f1-b5', x: 0, y: 48, w: 14, h: 13, seats: 6, zone: 'vip', label: 'Г-банкетка 5', type: 'booth' },
-            { id: 'f1-b6', x: 86, y: 48, w: 14, h: 13, seats: 6, zone: 'vip', label: 'Г-банкетка 6', type: 'booth' },
+            { id: 'f1-b5', x: 0, y: 48, w: 14, h: 13, seats: 6, zone: 'vip', label: 'Банкетка 5', type: 'booth' },
+            { id: 'f1-b6', x: 86, y: 48, w: 14, h: 13, seats: 6, zone: 'vip', label: 'Банкетка 6', type: 'booth' },
 
             { id: 'f1-t7', x: 36, y: 68, w: 12, h: 10, seats: 4, zone: 'standard', label: 'Стіл 7', type: 'tilted' },
             { id: 'f1-t8', x: 52, y: 68, w: 12, h: 10, seats: 4, zone: 'standard', label: 'Стіл 8', type: 'tilted' },
@@ -184,6 +180,44 @@ listenTableStatus(function(data) {
     renderAll();
 });
 
+function getTableReservations(tableId) {
+    var status = tableStatus[tableId] || {};
+    return status.reservations || {};
+}
+
+function calcTableReserved(tableId) {
+    var res = getTableReservations(tableId);
+    var total = 0;
+    Object.keys(res).forEach(function(k) {
+        if (res[k].status === 'reserved') total += (res[k].seats || 0);
+    });
+    return total;
+}
+
+function calcTableSold(tableId) {
+    var res = getTableReservations(tableId);
+    var total = 0;
+    Object.keys(res).forEach(function(k) {
+        if (res[k].status === 'sold') total += (res[k].seats || 0);
+    });
+    return total;
+}
+
+function getTableDisplayStatus(tableId) {
+    var res = getTableReservations(tableId);
+    var keys = Object.keys(res);
+    if (keys.length === 0) return 'free';
+    var hasReserved = false;
+    var allSold = true;
+    keys.forEach(function(k) {
+        if (res[k].status === 'reserved') hasReserved = true;
+        if (res[k].status !== 'sold') allSold = false;
+    });
+    if (allSold) return 'sold';
+    if (hasReserved) return 'reserved';
+    return 'free';
+}
+
 function renderFloor(floorNum) {
     var container = document.getElementById('floor' + floorNum);
     container.innerHTML = '';
@@ -224,14 +258,14 @@ function renderFloor(floorNum) {
         }
 
         var el = document.createElement('div');
-        var status = tableStatus[table.id] || { status: 'free' };
-        el.className = 'table-seat table-seat--' + table.type + ' ' + status.status;
+        var displayStatus = getTableDisplayStatus(table.id);
+        var bookedSeats = calcTableReserved(table.id);
+        el.className = 'table-seat table-seat--' + table.type + ' ' + displayStatus;
         el.dataset.id = table.id;
         el.style.cssText = 'left:' + table.x + '%;top:' + table.y + '%;width:' + table.w + '%;height:' + table.h + '%;';
 
         var text = document.createElement('span');
         if (table.seats > 0) {
-            var bookedSeats = status.seats || 0;
             text.innerHTML = table.seats;
             if (bookedSeats > 0) {
                 text.innerHTML += ' <span style="color:#ef4444;font-size:0.7em">(' + bookedSeats + ')</span>';
@@ -255,47 +289,82 @@ function showTableInfo(table) {
     if (el) el.classList.add('selected');
 
     var panel = document.getElementById('tableInfoPanel');
-    var status = tableStatus[table.id] || { status: 'free' };
     var floorName = table.id.startsWith('f1') ? '1 поверх' : '2 поверх';
     var zoneConfig = tablesConfig[table.id.startsWith('f1') ? 'floor1' : 'floor2'].zones[table.zone];
+    var bookedSeats = calcTableReserved(table.id);
+    var soldSeats = calcTableSold(table.id);
+    var availableSeats = table.seats - bookedSeats - soldSeats;
+    var displayStatus = getTableDisplayStatus(table.id);
+    var reservations = getTableReservations(table.id);
 
     document.getElementById('tableInfoTitle').textContent = table.label;
     document.getElementById('tableInfoZone').textContent = 'Зона: ' + (zoneConfig ? zoneConfig.name : table.zone) + ' (' + floorName + ')';
-    var bookedSeats = status.seats || 0;
-    var availableSeats = table.seats - bookedSeats;
-    document.getElementById('tableInfoSeats').innerHTML = 'Місць: ' + table.seats + (bookedSeats > 0 ? ' <span style="color:#ef4444">(зайнято ' + bookedSeats + ')</span>' : '') + ' <span style="color:#10b981">(вільно ' + availableSeats + ')</span>';
+
+    var statusColors = { free: '#10b981', reserved: '#f59e0b', sold: '#8b5cf6' };
+    var statusLabels = { free: 'Вільний', reserved: 'Зарезервовано', sold: 'Продано' };
+    document.getElementById('tableInfoStatus').textContent = 'Статус: ' + (statusLabels[displayStatus] || displayStatus);
+    document.getElementById('tableInfoStatus').style.color = statusColors[displayStatus] || '#888';
+
+    document.getElementById('tableInfoSeats').innerHTML =
+        'Місць: ' + table.seats +
+        (bookedSeats > 0 ? ' <span style="color:#f59e0b">(зарез. ' + bookedSeats + ')</span>' : '') +
+        (soldSeats > 0 ? ' <span style="color:#8b5cf6">(продано ' + soldSeats + ')</span>' : '') +
+        (availableSeats > 0 ? ' <span style="color:#10b981">(вільно ' + availableSeats + ')</span>' : '');
 
     var bookBtn = document.getElementById('bookTableBtn');
-    var sellBtn = document.getElementById('sellTableBtn');
-    var cancelBtn = document.getElementById('cancelBookBtn');
-    var bookedInfo = document.getElementById('tableInfoBooked');
-
     bookBtn.style.display = 'none';
-    sellBtn.style.display = 'none';
-    cancelBtn.style.display = 'none';
-    bookedInfo.style.display = 'none';
 
-    if (status.status === 'sold') {
-        document.getElementById('tableInfoStatus').textContent = 'Статус: Продано';
-        document.getElementById('tableInfoStatus').style.color = '#8b5cf6';
-        bookedInfo.style.display = 'block';
-        document.getElementById('tableInfoBookedDetails').textContent = status.date + ' ' + status.time + ' — ' + status.name + ' — ' + (status.amount || 0) + ' грн';
-    } else if (status.status === 'reserved') {
-        document.getElementById('tableInfoStatus').textContent = 'Статус: Зарезервовано';
-        document.getElementById('tableInfoStatus').style.color = '#f59e0b';
-        bookedInfo.style.display = 'block';
-        document.getElementById('tableInfoBookedDetails').textContent = status.date + ' ' + status.time + ' — ' + status.name + ' (' + bookedSeats + ' міс.)';
-        if (isAdmin) {
-            sellBtn.style.display = 'block';
-            cancelBtn.style.display = 'block';
-        }
-    } else if (status.status === 'free') {
-        document.getElementById('tableInfoStatus').textContent = 'Статус: Вільний';
-        document.getElementById('tableInfoStatus').style.color = '#10b981';
-        if (isAdmin) {
-            bookBtn.style.display = 'block';
-        }
+    var reservationsList = document.getElementById('reservationsList');
+    if (!reservationsList) {
+        reservationsList = document.createElement('div');
+        reservationsList.id = 'reservationsList';
+        reservationsList.style.cssText = 'margin-top:12px;border-top:1px solid #333;padding-top:12px;';
+        document.querySelector('.table-info-panel__body').appendChild(reservationsList);
     }
+    reservationsList.innerHTML = '';
+
+    var resKeys = Object.keys(reservations);
+    if (resKeys.length > 0) {
+        resKeys.forEach(function(k) {
+            var r = reservations[k];
+            var item = document.createElement('div');
+            item.style.cssText = 'background:#222;border-radius:8px;padding:10px;margin-bottom:8px;font-family:Montserrat,sans-serif;font-size:0.8rem;color:#ccc;';
+            var rStatus = r.status === 'sold' ? '✅ Продано' : '🟡 Зарезервовано';
+            var rColor = r.status === 'sold' ? '#8b5cf6' : '#f59e0b';
+            item.innerHTML =
+                '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
+                    '<span style="font-weight:600;color:#fff">' + r.name + '</span>' +
+                    '<span style="color:' + rColor + ';font-size:0.75rem">' + rStatus + '</span>' +
+                '</div>' +
+                '<div style="font-size:0.75rem;color:#999">' +
+                    '📅 ' + r.date + ' ' + r.time + ' · 👥 ' + r.seats + ' міс.' +
+                    (r.amount ? ' · 💰 ' + r.amount + ' грн' : '') +
+                '</div>';
+
+            if (isAdmin && r.status === 'reserved') {
+                var actions = document.createElement('div');
+                actions.style.cssText = 'display:flex;gap:6px;margin-top:8px;';
+                var sellR = document.createElement('button');
+                sellR.textContent = '💰 Продати';
+                sellR.style.cssText = 'flex:1;padding:6px;border:none;border-radius:6px;background:#8b5cf6;color:#fff;font-size:0.75rem;font-weight:600;cursor:pointer;';
+                sellR.onclick = function(e) { e.stopPropagation(); openSellModal(table, k, r); };
+                var cancelR = document.createElement('button');
+                cancelR.textContent = '✕ Скасувати';
+                cancelR.style.cssText = 'flex:1;padding:6px;border:none;border-radius:6px;background:#ef4444;color:#fff;font-size:0.75rem;font-weight:600;cursor:pointer;';
+                cancelR.onclick = function(e) { e.stopPropagation(); cancelReservation(table.id, k); };
+                actions.appendChild(sellR);
+                actions.appendChild(cancelR);
+                item.appendChild(actions);
+            }
+            reservationsList.appendChild(item);
+        });
+    }
+
+    if (isAdmin && availableSeats > 0) {
+        bookBtn.style.display = 'block';
+    }
+
+    document.getElementById('tableInfoBooked').style.display = 'none';
 
     panel.classList.add('active');
 
@@ -303,11 +372,6 @@ function showTableInfo(table) {
         if (!isAdmin) return;
         openBookingModal(table);
     };
-    sellBtn.onclick = function() {
-        if (!isAdmin) return;
-        openSellModal(table);
-    };
-    cancelBtn.onclick = function() { cancelBooking(table); };
 }
 
 function openBookingModal(table) {
@@ -315,8 +379,7 @@ function openBookingModal(table) {
     document.getElementById('tableInfoPanel').classList.remove('active');
     document.getElementById('bookingModal').style.display = 'flex';
 
-    var status = tableStatus[table.id] || { status: 'free', seats: 0 };
-    var available = table.seats - (status.seats || 0);
+    var available = table.seats - calcTableReserved(table.id) - calcTableSold(table.id);
     var guestsSelect = document.getElementById('bookGuests');
     guestsSelect.innerHTML = '<option value="">Оберіть кількість</option>';
     for (var i = 1; i <= available; i++) {
@@ -332,25 +395,16 @@ function openBookingModal(table) {
     }
 }
 
-function cancelBooking(table) {
-    var status = tableStatus[table.id];
-    if (status) {
-        var update = {};
-        update[table.id + '/status'] = 'free';
-        update[table.id + '/date'] = '';
-        update[table.id + '/time'] = '';
-        update[table.id + '/name'] = '';
-        update[table.id + '/phone'] = '';
-        update[table.id + '/seats'] = 0;
-        db.ref('tables').update(update);
-    }
+function cancelReservation(tableId, reservationId) {
+    if (!confirm('Скасувати цю бронь?')) return;
+    db.ref('tables/' + tableId + '/reservations/' + reservationId).remove();
 }
 
-function openSellModal(table) {
+function openSellModal(table, reservationId, reservation) {
     document.getElementById('sellTableId').value = table.id;
-    var status = tableStatus[table.id] || {};
+    document.getElementById('sellReservationId').value = reservationId;
     var floorName = table.id.startsWith('f1') ? '1 поверх' : '2 поверх';
-    document.getElementById('sellTableInfo').textContent = table.label + ' (' + floorName + ') — ' + (status.seats || 0) + ' міс.';
+    document.getElementById('sellTableInfo').textContent = table.label + ' (' + floorName + ') — ' + reservation.name + ' — ' + reservation.seats + ' міс.';
     document.getElementById('sellAmount').value = '';
     document.getElementById('tableInfoPanel').classList.remove('active');
     document.getElementById('sellModal').style.display = 'flex';
@@ -367,32 +421,35 @@ document.getElementById('sellModal').addEventListener('click', function(e) {
 document.getElementById('sellForm').addEventListener('submit', function(e) {
     e.preventDefault();
     var tableId = document.getElementById('sellTableId').value;
+    var reservationId = document.getElementById('sellReservationId').value;
     var amount = parseInt(document.getElementById('sellAmount').value);
-    if (!tableId || !amount || amount < 1) return;
+    if (!tableId || !reservationId || !amount || amount < 1) return;
 
-    var status = tableStatus[tableId] || {};
+    var reservations = getTableReservations(tableId);
+    var r = reservations[reservationId];
+    if (!r) return;
+
     var sellerName = '';
     if (isMiniApp && tg.initDataUnsafe.user) {
         var u = tg.initDataUnsafe.user;
         sellerName = u.first_name + (u.last_name ? ' ' + u.last_name : '');
     }
 
-    var update = {};
-    update[tableId + '/status'] = 'sold';
-    update[tableId + '/amount'] = amount;
-    update[tableId + '/soldBy'] = sellerName;
-    update[tableId + '/soldAt'] = Date.now();
-    db.ref('tables').update(update);
+    db.ref('tables/' + tableId + '/reservations/' + reservationId).update({
+        status: 'sold',
+        amount: amount,
+        soldBy: sellerName,
+        soldAt: Date.now()
+    });
 
     db.ref('sales').push({
         tableId: tableId,
         tableLabel: findTableLabel(tableId),
-        zone: status.zone || '',
-        date: status.date || '',
-        time: status.time || '',
-        name: status.name || '',
-        phone: status.phone || '',
-        seats: status.seats || 0,
+        reservationName: r.name,
+        reservationPhone: r.phone || '',
+        date: r.date || '',
+        time: r.time || '',
+        seats: r.seats || 0,
         amount: amount,
         soldBy: sellerName,
         soldAt: Date.now()
@@ -529,19 +586,26 @@ document.getElementById('tableBookingForm').addEventListener('submit', function(
     });
     if (!table) return;
 
-    var currentStatus = tableStatus[tableId] || { status: 'free', seats: 0 };
-    var currentSeats = currentStatus.seats || 0;
-    if (currentSeats + guests > table.seats) return;
+    var reserved = calcTableReserved(tableId);
+    var sold = calcTableSold(tableId);
+    if (reserved + sold + guests > table.seats) return;
 
-    var newSeats = currentSeats + guests;
-    var update = {};
-    update[tableId + '/status'] = 'reserved';
-    update[tableId + '/date'] = date;
-    update[tableId + '/time'] = time;
-    update[tableId + '/name'] = name;
-    update[tableId + '/phone'] = phone;
-    update[tableId + '/seats'] = newSeats;
-    db.ref('tables').update(update);
+    var sellerName = '';
+    if (isMiniApp && tg.initDataUnsafe.user) {
+        var u = tg.initDataUnsafe.user;
+        sellerName = u.first_name + (u.last_name ? ' ' + u.last_name : '');
+    }
+
+    db.ref('tables/' + tableId + '/reservations').push({
+        name: name,
+        phone: phone,
+        date: date,
+        time: time,
+        seats: guests,
+        status: 'reserved',
+        createdAt: Date.now(),
+        createdBy: sellerName
+    });
 
     var zoneLabels = { vip: 'VIP', standard: 'Стандарт', bar: 'Бар', lounge: 'Лаунж' };
     var floorName = tableId.startsWith('f1') ? '1 поверх' : '2 поверх';
