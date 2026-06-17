@@ -320,22 +320,9 @@ function showTableInfo(table) {
     var bookedSeats = calcTableReserved(table.id);
     var soldSeats = calcTableSold(table.id);
     var availableSeats = table.seats - bookedSeats - soldSeats;
-    var displayStatus = getTableDisplayStatus(table.id);
-    var reservations = getTableReservations(table.id);
 
     document.getElementById('tableInfoTitle').textContent = table.label;
     document.getElementById('tableInfoZone').textContent = 'Зона: ' + (zoneConfig ? zoneConfig.name : table.zone) + ' (' + floorName + ')';
-
-    var statusColors = { free: '#10b981', reserved: '#f59e0b', sold: '#8b5cf6' };
-    var statusLabels = { free: 'Вільний', reserved: 'Зарезервовано', sold: 'Продано' };
-    document.getElementById('tableInfoStatus').textContent = 'Статус: ' + (statusLabels[displayStatus] || displayStatus);
-    document.getElementById('tableInfoStatus').style.color = statusColors[displayStatus] || '#888';
-
-    document.getElementById('tableInfoSeats').innerHTML =
-        'Місць: ' + table.seats +
-        (bookedSeats > 0 ? ' <span style="color:#f59e0b">(зарез. ' + bookedSeats + ')</span>' : '') +
-        (soldSeats > 0 ? ' <span style="color:#8b5cf6">(продано ' + soldSeats + ')</span>' : '') +
-        (availableSeats > 0 ? ' <span style="color:#10b981">(вільно ' + availableSeats + ')</span>' : '');
 
     var bookBtn = document.getElementById('bookTableBtn');
     bookBtn.style.display = 'none';
@@ -349,45 +336,65 @@ function showTableInfo(table) {
     }
     reservationsList.innerHTML = '';
 
-    var resKeys = Object.keys(reservations);
-    if (resKeys.length > 0) {
-        resKeys.forEach(function(k) {
-            var r = reservations[k];
-            var item = document.createElement('div');
-            item.style.cssText = 'background:#222;border-radius:8px;padding:10px;margin-bottom:8px;font-family:Montserrat,sans-serif;font-size:0.8rem;color:#ccc;';
-            var rStatus = r.status === 'sold' ? '✅ Продано' : '🟡 Зарезервовано';
-            var rColor = r.status === 'sold' ? '#8b5cf6' : '#f59e0b';
-            item.innerHTML =
-                '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
-                    '<span style="font-weight:600;color:#fff">' + r.name + '</span>' +
-                    '<span style="color:' + rColor + ';font-size:0.75rem">' + rStatus + '</span>' +
-                '</div>' +
-                '<div style="font-size:0.75rem;color:#999">' +
-                    '📅 ' + r.date + ' ' + r.time + ' · 👥 ' + r.seats + ' міс.' +
-                    (r.amount ? ' · 💰 ' + r.amount + ' грн' : '') +
-                '</div>';
+    if (isAdmin) {
+        var displayStatus = getTableDisplayStatus(table.id);
+        var statusColors = { free: '#10b981', reserved: '#f59e0b', sold: '#8b5cf6' };
+        var statusLabels = { free: 'Вільний', reserved: 'Зарезервовано', sold: 'Продано' };
+        document.getElementById('tableInfoStatus').textContent = 'Статус: ' + (statusLabels[displayStatus] || displayStatus);
+        document.getElementById('tableInfoStatus').style.color = statusColors[displayStatus] || '#888';
+        document.getElementById('tableInfoSeats').innerHTML =
+            'Місць: ' + table.seats +
+            (bookedSeats > 0 ? ' <span style="color:#f59e0b">(зарез. ' + bookedSeats + ')</span>' : '') +
+            (soldSeats > 0 ? ' <span style="color:#8b5cf6">(продано ' + soldSeats + ')</span>' : '') +
+            (availableSeats > 0 ? ' <span style="color:#10b981">(вільно ' + availableSeats + ')</span>' : '');
 
-            if (isAdmin && r.status === 'reserved') {
-                var actions = document.createElement('div');
-                actions.style.cssText = 'display:flex;gap:6px;margin-top:8px;';
-                var sellR = document.createElement('button');
-                sellR.textContent = '💰 Продати';
-                sellR.style.cssText = 'flex:1;padding:6px;border:none;border-radius:6px;background:#8b5cf6;color:#fff;font-size:0.75rem;font-weight:600;cursor:pointer;';
-                sellR.onclick = function(e) { e.stopPropagation(); openSellModal(table, k, r); };
-                var cancelR = document.createElement('button');
-                cancelR.textContent = '✕ Скасувати';
-                cancelR.style.cssText = 'flex:1;padding:6px;border:none;border-radius:6px;background:#ef4444;color:#fff;font-size:0.75rem;font-weight:600;cursor:pointer;';
-                cancelR.onclick = function(e) { e.stopPropagation(); cancelReservation(table.id, k); };
-                actions.appendChild(sellR);
-                actions.appendChild(cancelR);
-                item.appendChild(actions);
-            }
-            reservationsList.appendChild(item);
-        });
-    }
+        var reservations = getTableReservations(table.id);
+        var resKeys = Object.keys(reservations);
+        if (resKeys.length > 0) {
+            resKeys.forEach(function(k) {
+                var r = reservations[k];
+                var item = document.createElement('div');
+                item.style.cssText = 'background:#222;border-radius:8px;padding:10px;margin-bottom:8px;font-family:Montserrat,sans-serif;font-size:0.8rem;color:#ccc;';
+                var rStatus = r.status === 'sold' ? '✅ Продано' : '🟡 Зарезервовано';
+                var rColor = r.status === 'sold' ? '#8b5cf6' : '#f59e0b';
+                item.innerHTML =
+                    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
+                        '<span style="font-weight:600;color:#fff">' + r.name + '</span>' +
+                        '<span style="color:' + rColor + ';font-size:0.75rem">' + rStatus + '</span>' +
+                    '</div>' +
+                    '<div style="font-size:0.75rem;color:#999">' +
+                        '📅 ' + r.date + ' ' + r.time + ' · 👥 ' + r.seats + ' міс.' +
+                        (r.amount ? ' · 💰 ' + r.amount + ' грн' : '') +
+                    '</div>';
+                if (r.status === 'reserved') {
+                    var actions = document.createElement('div');
+                    actions.style.cssText = 'display:flex;gap:6px;margin-top:8px;';
+                    var sellR = document.createElement('button');
+                    sellR.textContent = '💰 Продати';
+                    sellR.style.cssText = 'flex:1;padding:6px;border:none;border-radius:6px;background:#8b5cf6;color:#fff;font-size:0.75rem;font-weight:600;cursor:pointer;';
+                    sellR.onclick = function(e) { e.stopPropagation(); openSellModal(table, k, r); };
+                    var cancelR = document.createElement('button');
+                    cancelR.textContent = '✕ Скасувати';
+                    cancelR.style.cssText = 'flex:1;padding:6px;border:none;border-radius:6px;background:#ef4444;color:#fff;font-size:0.75rem;font-weight:600;cursor:pointer;';
+                    cancelR.onclick = function(e) { e.stopPropagation(); cancelReservation(table.id, k); };
+                    actions.appendChild(sellR);
+                    actions.appendChild(cancelR);
+                    item.appendChild(actions);
+                }
+                reservationsList.appendChild(item);
+            });
+        }
 
-    if (isAdmin && availableSeats > 0) {
-        bookBtn.style.display = 'block';
+        if (availableSeats > 0) {
+            bookBtn.style.display = 'block';
+        }
+    } else {
+        document.getElementById('tableInfoStatus').textContent = availableSeats > 0 ? 'Є вільні місця' : 'Немає вільних місць';
+        document.getElementById('tableInfoStatus').style.color = availableSeats > 0 ? '#10b981' : '#ef4444';
+        document.getElementById('tableInfoSeats').textContent = 'Всього: ' + table.seats + ' · Вільно: ' + availableSeats;
+        if (availableSeats > 0) {
+            bookBtn.style.display = 'block';
+        }
     }
 
     document.getElementById('tableInfoBooked').style.display = 'none';
@@ -395,7 +402,6 @@ function showTableInfo(table) {
     panel.classList.add('active');
 
     bookBtn.onclick = function() {
-        if (!isAdmin) return;
         openBookingModal(table);
     };
 }
@@ -609,6 +615,145 @@ document.getElementById('tableBookingForm').addEventListener('submit', function(
         tablesConfig[floor].tables.forEach(function(t) {
             if (t.id === tableId) table = t;
         });
+    });
+    if (!table) return;
+
+    var reserved = calcTableReserved(tableId);
+    var sold = calcTableSold(tableId);
+    if (reserved + sold + guests > table.seats) return;
+
+    var sellerName = '';
+    if (isMiniApp && tg.initDataUnsafe.user) {
+        var u = tg.initDataUnsafe.user;
+        sellerName = u.first_name + (u.last_name ? ' ' + u.last_name : '');
+    }
+
+    var zoneLabels = { vip: 'VIP', standard: 'Стандарт', bar: 'Бар' };
+    var floorName = tableId.startsWith('f1') ? '1 поверх' : '2 поверх';
+
+    var btn = document.getElementById('bookSubmitBtn');
+    btn.textContent = 'Надсилаємо...';
+    btn.disabled = true;
+
+    if (isAdmin) {
+        db.ref('tables/' + tableId + '/reservations').push({
+            name: name,
+            phone: phone,
+            date: date,
+            time: time,
+            seats: guests,
+            status: 'reserved',
+            createdAt: Date.now(),
+            createdBy: sellerName
+        });
+
+        var msg = '🎾 *Нова бронь (адмін)*\n\n';
+        msg += '🪑 *Стіл:* ' + table.label + ' (' + floorName + ')\n';
+        msg += '💎 *Зона:* ' + (zoneLabels[table.zone] || table.zone) + '\n';
+        msg += '👤 *Ім\'я:* ' + name + '\n';
+        msg += '📞 *Телефон:* ' + phone + '\n';
+        msg += '📅 *Дата:* ' + date + '\n';
+        msg += '🕐 *Час:* ' + time + '\n';
+        msg += '👥 *Місць:* ' + guests;
+
+        fetch('https://api.telegram.org/bot' + TG_BOT_TOKEN + '/sendMessage', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: TG_CHAT_ID, text: msg, parse_mode: 'Markdown' })
+        }).then(function() {
+            btn.textContent = '✅ Заброньовано!';
+            btn.style.background = '#10b981';
+            setTimeout(function() {
+                document.getElementById('bookingModal').style.display = 'none';
+                btn.textContent = 'Забронювати';
+                btn.style.background = '';
+                btn.disabled = false;
+                document.getElementById('tableBookingForm').reset();
+            }, 1500);
+        }).catch(function() {
+            btn.textContent = '❌ Помилка';
+            btn.style.background = '#ef4444';
+            setTimeout(function() {
+                btn.textContent = 'Забронювати';
+                btn.style.background = '';
+                btn.disabled = false;
+            }, 2000);
+        });
+    } else {
+        var pendingRef = db.ref('pending_bookings').push();
+        var pendingId = pendingRef.key;
+        var tgUserId = (isMiniApp && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id : null;
+        var tgUsername = (isMiniApp && tg.initDataUnsafe.user) ? (tg.initDataUnsafe.user.username || '') : '';
+
+        pendingRef.set({
+            name: name,
+            phone: phone,
+            date: date,
+            time: time,
+            tableId: tableId,
+            tableLabel: table.label,
+            zone: table.zone,
+            floor: tableId.startsWith('f1') ? '1' : '2',
+            seats: guests,
+            tgUserId: tgUserId,
+            tgUsername: tgUsername,
+            createdAt: Date.now()
+        }).then(function() {
+            var msg = '🎾 *Нова заявка на бронювання*\n\n';
+            if (tgUserId) {
+                msg += '🆔 *Telegram:* @' + (tgUsername || 'немає') + ' (ID: ' + tgUserId + ')\n';
+            }
+            msg += '🪑 *Стіл:* ' + table.label + ' (' + floorName + ')\n';
+            msg += '💎 *Зона:* ' + (zoneLabels[table.zone] || table.zone) + '\n';
+            msg += '👤 *Ім\'я:* ' + name + '\n';
+            msg += '📞 *Телефон:* ' + phone + '\n';
+            msg += '📅 *Дата:* ' + date + '\n';
+            msg += '🕐 *Час:* ' + time + '\n';
+            msg += '👥 *Місць:* ' + guests;
+
+            var inlineKeyboard = {
+                inline_keyboard: [[
+                    { text: '✅ Одобрити', callback_data: 'approve_' + pendingId },
+                    { text: '❌ Скасувати', callback_data: 'cancel_' + pendingId }
+                ]]
+            };
+
+            return fetch('https://api.telegram.org/bot' + TG_BOT_TOKEN + '/sendMessage', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: TG_CHAT_ID,
+                    text: msg,
+                    parse_mode: 'Markdown',
+                    reply_markup: inlineKeyboard
+                })
+            });
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(res) {
+            if (res.ok) {
+                btn.textContent = '✅ Заявку надіслано!';
+                btn.style.background = '#10b981';
+                setTimeout(function() {
+                    document.getElementById('bookingModal').style.display = 'none';
+                    btn.textContent = 'Забронювати';
+                    btn.style.background = '';
+                    btn.disabled = false;
+                    document.getElementById('tableBookingForm').reset();
+                }, 1500);
+            } else { throw new Error(); }
+        })
+        .catch(function() {
+            btn.textContent = '❌ Помилка';
+            btn.style.background = '#ef4444';
+            setTimeout(function() {
+                btn.textContent = 'Забронювати';
+                btn.style.background = '';
+                btn.disabled = false;
+            }, 2000);
+        });
+    }
+});
     });
     if (!table) return;
 
