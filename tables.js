@@ -180,19 +180,35 @@ listenTableStatus(function(data) {
     renderAll();
 });
 
-function getTableReservations(tableId) {
+function getTodayDate() {
+    var d = new Date();
+    var dd = d.getDate() < 10 ? '0' + d.getDate() : '' + d.getDate();
+    var mm = (d.getMonth() + 1) < 10 ? '0' + (d.getMonth() + 1) : '' + (d.getMonth() + 1);
+    return dd + '.' + mm + '.' + d.getFullYear();
+}
+
+function getTableReservations(tableId, filterDate) {
     var status = tableStatus[tableId] || {};
+    var date = filterDate || getTodayDate();
     if (status.reservations && typeof status.reservations === 'object') {
-        return status.reservations;
+        var filtered = {};
+        Object.keys(status.reservations).forEach(function(k) {
+            var r = status.reservations[k];
+            if (r.date === date) filtered[k] = r;
+        });
+        return filtered;
     }
     if (status.status && status.status !== 'free' && status.name) {
-        return { _legacy: { name: status.name, phone: status.phone || '', date: status.date || '', time: status.time || '', seats: status.seats || 0, status: status.status === 'sold' ? 'sold' : 'reserved' } };
+        if (status.date === date) {
+            return { _legacy: { name: status.name, phone: status.phone || '', date: status.date || '', time: status.time || '', seats: status.seats || 0, status: status.status === 'sold' ? 'sold' : 'reserved' } };
+        }
+        return {};
     }
     return {};
 }
 
-function calcTableReserved(tableId) {
-    var res = getTableReservations(tableId);
+function calcTableReserved(tableId, filterDate) {
+    var res = getTableReservations(tableId, filterDate);
     var total = 0;
     Object.keys(res).forEach(function(k) {
         if (res[k].status === 'reserved') total += (res[k].seats || 0);
@@ -200,8 +216,8 @@ function calcTableReserved(tableId) {
     return total;
 }
 
-function calcTableSold(tableId) {
-    var res = getTableReservations(tableId);
+function calcTableSold(tableId, filterDate) {
+    var res = getTableReservations(tableId, filterDate);
     var total = 0;
     Object.keys(res).forEach(function(k) {
         if (res[k].status === 'sold') total += (res[k].seats || 0);
@@ -209,8 +225,8 @@ function calcTableSold(tableId) {
     return total;
 }
 
-function getTableDisplayStatus(tableId) {
-    var res = getTableReservations(tableId);
+function getTableDisplayStatus(tableId, filterDate) {
+    var res = getTableReservations(tableId, filterDate);
     var keys = Object.keys(res);
     if (keys.length === 0) return 'free';
     var hasReserved = false;
@@ -264,9 +280,9 @@ function renderFloor(floorNum) {
         }
 
         var el = document.createElement('div');
-        var displayStatus = getTableDisplayStatus(table.id);
-        var bookedSeats = calcTableReserved(table.id);
-        var soldSeats = calcTableSold(table.id);
+        var displayStatus = getTableDisplayStatus(table.id, selectedDate);
+        var bookedSeats = calcTableReserved(table.id, selectedDate);
+        var soldSeats = calcTableSold(table.id, selectedDate);
         var totalSeats = table.seats || 1;
         var freeSeats = totalSeats - bookedSeats - soldSeats;
 
@@ -323,8 +339,8 @@ function showTableInfo(table) {
     var panel = document.getElementById('tableInfoPanel');
     var floorName = table.id.startsWith('f1') ? '1 поверх' : '2 поверх';
     var zoneConfig = tablesConfig[table.id.startsWith('f1') ? 'floor1' : 'floor2'].zones[table.zone];
-    var bookedSeats = calcTableReserved(table.id);
-    var soldSeats = calcTableSold(table.id);
+    var bookedSeats = calcTableReserved(table.id, selectedDate);
+    var soldSeats = calcTableSold(table.id, selectedDate);
     var availableSeats = table.seats - bookedSeats - soldSeats;
 
     document.getElementById('tableInfoTitle').textContent = table.label;
@@ -343,7 +359,7 @@ function showTableInfo(table) {
     reservationsList.innerHTML = '';
 
     if (isAdmin) {
-        var displayStatus = getTableDisplayStatus(table.id);
+        var displayStatus = getTableDisplayStatus(table.id, selectedDate);
         var statusColors = { free: '#10b981', reserved: '#f59e0b', sold: '#8b5cf6' };
         var statusLabels = { free: 'Вільний', reserved: 'Зарезервовано', sold: 'Продано' };
         document.getElementById('tableInfoStatus').textContent = 'Статус: ' + (statusLabels[displayStatus] || displayStatus);
@@ -354,7 +370,7 @@ function showTableInfo(table) {
             (soldSeats > 0 ? ' <span style="color:#8b5cf6">(продано ' + soldSeats + ')</span>' : '') +
             (availableSeats > 0 ? ' <span style="color:#10b981">(вільно ' + availableSeats + ')</span>' : '');
 
-        var reservations = getTableReservations(table.id);
+        var reservations = getTableReservations(table.id, selectedDate);
         var resKeys = Object.keys(reservations);
         if (resKeys.length > 0) {
             resKeys.forEach(function(k) {
@@ -419,7 +435,7 @@ function openBookingModal(table) {
 
     populateDatePickers();
 
-    var available = table.seats - calcTableReserved(table.id) - calcTableSold(table.id);
+    var available = table.seats - calcTableReserved(table.id, selectedDate) - calcTableSold(table.id, selectedDate);
     var guestsSelect = document.getElementById('bookGuests');
     guestsSelect.innerHTML = '<option value="">Оберіть кількість</option>';
     for (var i = 1; i <= available; i++) {
@@ -547,6 +563,23 @@ document.getElementById('closeShiftBtn').addEventListener('click', function() {
         closeShift();
     }
 });
+
+var selectedDate = getTodayDate();
+var dateFilter = document.getElementById('dateFilter');
+if (dateFilter) {
+    var now = new Date();
+    var yyyy = now.getFullYear();
+    var mm = (now.getMonth() + 1) < 10 ? '0' + (now.getMonth() + 1) : '' + (now.getMonth() + 1);
+    var dd = now.getDate() < 10 ? '0' + now.getDate() : '' + now.getDate();
+    dateFilter.value = yyyy + '-' + mm + '-' + dd;
+    dateFilter.addEventListener('change', function() {
+        var parts = this.value.split('-');
+        if (parts.length === 3) {
+            selectedDate = parts[2] + '.' + parts[1] + '.' + parts[0];
+            renderAll();
+        }
+    });
+}
 
 document.querySelectorAll('.floor-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {

@@ -384,6 +384,21 @@
     background: #d97706;
 }
 
+.date-filter__input {
+    padding: 8px 12px;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    outline: none;
+}
+
+.date-filter__input:focus {
+    border-color: #5a8a20;
+}
+
 /* ===== Modal ===== */
 .modal {
     position: fixed;
