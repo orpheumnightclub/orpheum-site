@@ -182,7 +182,13 @@ listenTableStatus(function(data) {
 
 function getTableReservations(tableId) {
     var status = tableStatus[tableId] || {};
-    return status.reservations || {};
+    if (status.reservations && typeof status.reservations === 'object') {
+        return status.reservations;
+    }
+    if (status.status && status.status !== 'free' && status.name) {
+        return { _legacy: { name: status.name, phone: status.phone || '', date: status.date || '', time: status.time || '', seats: status.seats || 0, status: status.status === 'sold' ? 'sold' : 'reserved' } };
+    }
+    return {};
 }
 
 function calcTableReserved(tableId) {
@@ -753,80 +759,6 @@ document.getElementById('tableBookingForm').addEventListener('submit', function(
             }, 2000);
         });
     }
-});
-    });
-    if (!table) return;
-
-    var reserved = calcTableReserved(tableId);
-    var sold = calcTableSold(tableId);
-    if (reserved + sold + guests > table.seats) return;
-
-    var sellerName = '';
-    if (isMiniApp && tg.initDataUnsafe.user) {
-        var u = tg.initDataUnsafe.user;
-        sellerName = u.first_name + (u.last_name ? ' ' + u.last_name : '');
-    }
-
-    db.ref('tables/' + tableId + '/reservations').push({
-        name: name,
-        phone: phone,
-        date: date,
-        time: time,
-        seats: guests,
-        status: 'reserved',
-        createdAt: Date.now(),
-        createdBy: sellerName
-    });
-
-    var zoneLabels = { vip: 'VIP', standard: 'Стандарт', bar: 'Бар', lounge: 'Лаунж' };
-    var floorName = tableId.startsWith('f1') ? '1 поверх' : '2 поверх';
-
-    var msg = '🎾 *Нова заявка на бронювання стола*\n\n';
-    if (isMiniApp && tg.initDataUnsafe.user) {
-        var u = tg.initDataUnsafe.user;
-        msg += '🆔 *Telegram:* @' + (u.username || 'немає') + ' (ID: ' + u.id + ')\n';
-    }
-    msg += '🪑 *Стіл:* ' + table.label + ' (' + floorName + ')\n';
-    msg += '💎 *Зона:* ' + (zoneLabels[table.zone] || table.zone) + '\n';
-    msg += '👤 *Ім\'я:* ' + name + '\n';
-    msg += '📞 *Телефон:* ' + phone + '\n';
-    msg += '📅 *Дата:* ' + date + '\n';
-    msg += '🕐 *Час:* ' + time + '\n';
-    msg += '👥 *Заброньовано місць:* ' + guests + ' з ' + table.seats;
-
-    var btn = document.getElementById('bookSubmitBtn');
-    btn.textContent = 'Надсилаємо...';
-    btn.disabled = true;
-
-    fetch('https://api.telegram.org/bot' + TG_BOT_TOKEN + '/sendMessage', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: TG_CHAT_ID, text: msg, parse_mode: 'Markdown' })
-    })
-    .then(function(r) { return r.json(); })
-    .then(function(res) {
-        if (res.ok) {
-            btn.textContent = '✅ Заявку надіслано!';
-            btn.style.background = '#10b981';
-            setTimeout(function() {
-                document.getElementById('bookingModal').style.display = 'none';
-                btn.textContent = 'Забронювати';
-                btn.style.background = '';
-                btn.disabled = false;
-                document.getElementById('tableBookingForm').reset();
-// renderAll is called after Firebase loads data
-            }, 1500);
-        } else { throw new Error(); }
-    })
-    .catch(function() {
-        btn.textContent = '❌ Помилка';
-        btn.style.background = '#ef4444';
-        setTimeout(function() {
-            btn.textContent = 'Забронювати';
-            btn.style.background = '';
-            btn.disabled = false;
-        }, 2000);
-    });
 });
 
 renderAll();

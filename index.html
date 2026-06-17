@@ -245,7 +245,7 @@
             <div class="booking__info">
                 <h2 class="booking__title">Забронюйте<br>свій вечір</h2>
                 <p class="booking__desc">
-                    Залиште заявку і ми зв'яжемося з вами для підтвердження бронювання. VIP-зони та столи доступні для попереднього замовлення.
+                    Оберіть стіл на карті та забронюйте його онлайн. VIP-зони та столи доступні для попереднього замовлення.
                 </p>
                 <div class="booking__features">
                     <div class="booking__feature">
@@ -261,62 +261,8 @@
                         <span>Комплексне обслуговування</span>
                     </div>
                 </div>
+                <a href="tables.html" class="hero__btn hero__btn--primary" style="display:inline-block;margin-top:24px">Обрати стіл та забронювати</a>
             </div>
-            <form class="booking__form" id="bookingForm" novalidate>
-                <div class="booking__form-fields">
-                    <div class="booking__form-user" id="userInfo" style="display:none;"></div>
-                    <div class="booking__form-group">
-                        <label for="name">Ваше ім'я *</label>
-                        <input type="text" id="name" name="name" placeholder="Олександр" minlength="2" maxlength="50" required>
-                        <span class="booking__form-error" id="nameError"></span>
-                    </div>
-                    <div class="booking__form-group">
-                        <label for="phone">Телефон *</label>
-                        <input type="tel" id="phone" name="phone" placeholder="+38 (0__) ___-__-__" required>
-                        <span class="booking__form-error" id="phoneError"></span>
-                    </div>
-                    <div class="booking__form-group">
-                        <label for="date">Дата *</label>
-                        <input type="text" id="date" name="date" placeholder="ДД.ММ.РРРР" maxlength="10" required>
-                        <span class="booking__form-error" id="dateError"></span>
-                    </div>
-                    <div class="booking__form-group">
-                        <label for="bookFloor">Поверх</label>
-                        <select id="bookFloor" name="floor">
-                            <option value="1">1 поверх</option>
-                            <option value="2">2 поверх (VIP)</option>
-                        </select>
-                    </div>
-                    <div class="booking__form-group">
-                        <label for="bookTableSelect">Стіл</label>
-                        <select id="bookTableSelect" name="tableId" required>
-                            <option value="">Спочатку оберіть поверх</option>
-                        </select>
-                        <span class="booking__form-error" id="bookTableSelectError"></span>
-                    </div>
-                    <div class="booking__form-group">
-                        <label for="bookTime">Час</label>
-                        <select id="bookTime" name="time" required>
-                            <option value="">Оберіть час</option>
-                            <option value="22:00">22:00</option>
-                            <option value="23:00">23:00</option>
-                            <option value="00:00">00:00</option>
-                            <option value="01:00">01:00</option>
-                            <option value="02:00">02:00</option>
-                            <option value="03:00">03:00</option>
-                        </select>
-                        <span class="booking__form-error" id="bookTimeError"></span>
-                    </div>
-                    <div class="booking__form-group">
-                        <label for="bookSeats">Кількість місць</label>
-                        <select id="bookSeats" name="seats" required>
-                            <option value="">Спочатку оберіть стіл</option>
-                        </select>
-                        <span class="booking__form-error" id="bookSeatsError"></span>
-                    </div>
-                    <button type="submit" class="booking__form-btn" id="submitBtn">Надіслати заявку</button>
-                </div>
-            </form>
         </div>
     </div>
 </section>
@@ -418,8 +364,6 @@
     </div>
 </footer>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-<script src="script.js?v=12"></script>
+<script src="script.js?v=13"></script>
 </body>
 </html>
