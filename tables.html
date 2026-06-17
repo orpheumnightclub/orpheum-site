@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="tables.css?v=2">
+    <link rel="stylesheet" href="tables.css?v=3">
 </head>
 <body>
 
@@ -106,14 +106,14 @@
             </div>
             <div class="booking__form-group">
                 <label>Дата</label>
-                <div style="display:flex;gap:8px;">
-                    <select id="bookDay" required style="flex:1;padding:10px;background:#222;border:1px solid #444;border-radius:8px;color:#fff;font-family:'Montserrat',sans-serif;">
+                <div class="date-pickers">
+                    <select id="bookDay" required>
                         <option value="">День</option>
                     </select>
-                    <select id="bookMonth" required style="flex:1.5;padding:10px;background:#222;border:1px solid #444;border-radius:8px;color:#fff;font-family:'Montserrat',sans-serif;">
+                    <select id="bookMonth" required>
                         <option value="">Місяць</option>
                     </select>
-                    <select id="bookYear" required style="flex:1;padding:10px;background:#222;border:1px solid #444;border-radius:8px;color:#fff;font-family:'Montserrat',sans-serif;">
+                    <select id="bookYear" required>
                         <option value="">Рік</option>
                     </select>
                 </div>
@@ -130,10 +130,6 @@
                     <option value="01:00">01:00</option>
                     <option value="02:00">02:00</option>
                     <option value="03:00">03:00</option>
-                    <option value="04:00">04:00</option>
-                    <option value="05:00">05:00</option>
-                    <option value="06:00">06:00</option>
-                    <option value="07:00">07:00</option>
                 </select>
                 <span class="booking__error" id="bookTimeError"></span>
             </div>
@@ -170,6 +166,6 @@
 
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-    <script src="tables.js?v=9"></script>
+    <script src="tables.js?v=10"></script>
 </body>
 </html>
