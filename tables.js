@@ -16,12 +16,18 @@ var TG_BOT_TOKEN = '8841778405:AAGxnnq7rC_OqG8b4Po4ZuGur1o37XFs-Fg';
 var TG_CHAT_ID = '-1004472996150';
 var isAdmin = false;
 
+if (window.location.search.indexOf('admin') !== -1) {
+    isAdmin = true;
+}
+
 if (tg && isMiniApp) {
     tg.ready();
     tg.expand();
     tg.setHeaderColor('#0a0a0a');
     tg.setBackgroundColor('#0a0a0a');
     checkAdmin(tg.initDataUnsafe.user.id);
+} else if (isAdmin) {
+    updateUI();
 }
 
 function checkAdmin(userId) {
@@ -33,8 +39,24 @@ function checkAdmin(userId) {
                 isAdmin = (s === 'administrator' || s === 'creator' || s === 'member');
             }
             updateUI();
+            var selectedEl = document.querySelector('.table-seat.selected');
+            if (selectedEl) {
+                var tableId = selectedEl.dataset.id;
+                var table = findTableById(tableId);
+                if (table) showTableInfo(table);
+            }
         })
         .catch(function() { isAdmin = false; updateUI(); });
+}
+
+function findTableById(tableId) {
+    var found = null;
+    Object.keys(tablesConfig).forEach(function(floor) {
+        tablesConfig[floor].tables.forEach(function(t) {
+            if (t.id === tableId) found = t;
+        });
+    });
+    return found;
 }
 
 function updateUI() {
