@@ -476,18 +476,50 @@ body {
 }
 
 .event-card {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    padding: 24px;
-    background: var(--color-bg-card);
-    border: 1px solid var(--color-border);
+    position: relative;
     border-radius: 16px;
-    transition: all 0.3s ease;
+    overflow: hidden;
+    min-height: 200px;
+    display: flex;
+    align-items: stretch;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    border: 1px solid var(--color-border);
 }
 
 .event-card:hover {
-    border-color: var(--color-primary);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(90, 138, 32, 0.1);
+    border-color: rgba(90, 138, 32, 0.4);
+}
+
+.event-card__bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--color-bg-card);
+    transition: transform 0.5s ease;
+}
+
+.event-card:hover .event-card__bg {
+    transform: scale(1.05);
+}
+
+.event-card__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.2) 70%, transparent 100%);
+}
+
+.event-card__content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    padding: 28px 32px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
 }
 
 .event-card__date {
@@ -495,51 +527,68 @@ body {
     flex-direction: column;
     align-items: center;
     min-width: 60px;
-    padding: 12px;
+    padding: 14px 10px;
     background: var(--color-primary);
     border-radius: 12px;
+    flex-shrink: 0;
 }
 
 .event-card__day {
-    font-size: 24px;
+    font-size: 26px;
     font-weight: 800;
     line-height: 1;
+    color: #fff;
 }
 
 .event-card__month {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 2px;
-    color: var(--color-text-secondary);
+    color: rgba(255,255,255,0.8);
 }
 
 .event-card__info {
     flex: 1;
+    min-width: 0;
 }
 
 .event-card__name {
+    font-family: var(--font-display);
     font-size: 22px;
     font-weight: 700;
-    margin-bottom: 8px;
+    color: #fff;
+    margin-bottom: 6px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    line-height: 1.2;
 }
 
 .event-card__time {
     font-size: 14px;
-    color: var(--color-text-secondary);
+    color: rgba(255,255,255,0.6);
     margin-bottom: 4px;
 }
 
 .event-card__dj {
-    font-size: 13px;
+    font-size: 12px;
     color: var(--color-primary-light);
     text-transform: uppercase;
     letter-spacing: 1px;
+    font-weight: 600;
 }
 
 .event-card__price {
     font-size: 14px;
     font-weight: 600;
+    color: rgba(255,255,255,0.8);
+    background: rgba(0,0,0,0.5);
+    padding: 6px 14px;
+    border-radius: 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.1);
+}
     color: var(--color-text-secondary);
     text-align: right;
     min-width: 100px;
@@ -570,13 +619,14 @@ body {
     background: var(--color-bg-card);
     border: 1px solid var(--color-border);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .gallery__album:hover {
-    border-color: var(--color-primary);
-    transform: translateY(-4px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    border-color: rgba(90, 138, 32, 0.4);
+    transform: translateY(-6px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(90, 138, 32, 0.1);
 }
 
 .gallery__album-poster {
@@ -588,39 +638,49 @@ body {
 
 .gallery__album-overlay {
     position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 40%, transparent 60%);
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding: 20px;
+    left: 0;
+    bottom: 0;
+    width: fit-content;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-radius: 0 10px 0 0;
+    padding: 10px 14px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    border-right: 1px solid rgba(255,255,255,0.08);
 }
 
 .gallery__album-date {
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 9px;
+    font-weight: 700;
     color: var(--color-primary-light);
     text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: 6px;
+    letter-spacing: 2.5px;
+    margin-bottom: 4px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.6);
 }
 
 .gallery__album-name {
     font-family: var(--font-display);
-    font-size: 22px;
+    font-size: 17px;
     font-weight: 700;
-    color: var(--color-text);
-    margin-bottom: 8px;
+    color: #ffffff;
+    margin-bottom: 3px;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+    line-height: 1.15;
 }
 
 .gallery__album-count {
-    font-size: 13px;
-    color: var(--color-text-secondary);
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.55);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    letter-spacing: 0.3px;
 }
 
 .gallery__album-count span {
     color: var(--color-primary-light);
-    font-weight: 600;
+    font-weight: 700;
 }
 
 /* Lightbox */
@@ -1270,18 +1330,16 @@ body {
     }
 
     .event-card {
-        flex-direction: column;
-        align-items: flex-start;
+        min-height: 160px;
+    }
+
+    .event-card__content {
+        padding: 20px;
         gap: 16px;
     }
 
-    .event-card__date {
-        flex-direction: row;
-        gap: 8px;
-    }
-
-    .event-card__price {
-        text-align: left;
+    .event-card__name {
+        font-size: 18px;
     }
 
     .booking__form {
