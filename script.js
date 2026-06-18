@@ -165,13 +165,271 @@ var observer = new IntersectionObserver(function(entries) {
     });
 }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-document.querySelectorAll('.about__card, .event-card, .gallery__item, .contacts__item').forEach(function(el) {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(30px)';
-    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    observer.observe(el);
+function observeElements() {
+    document.querySelectorAll('.about__card, .event-card, .gallery__album, .contacts__item').forEach(function(el) {
+        if (el.classList.contains('visible')) return;
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(el);
+    });
+}
+
+observeElements();
+
+var animStyle = document.createElement('style');
+animStyle.textContent = '.visible { opacity: 1 !important; transform: translateY(0) !important; }';
+document.head.appendChild(animStyle);
+
+// ===== Gallery: date-based albums =====
+var galleryAlbums = [
+    {
+        date: '20.06.2025',
+        dayName: 'П\'ятниця',
+        name: 'Friday Night Bass',
+        folder: '2025-06-20',
+        images: ['images/1.jpg', 'images/2.jpg', 'images/3.jpg'],
+        poster: 'images/1.jpg'
+    },
+    {
+        date: '21.06.2025',
+        dayName: 'Субота',
+        name: 'Summer Vibes Open Air',
+        folder: '2025-06-21',
+        images: ['images/2.jpg', 'images/3.jpg', 'images/4.jpg', 'images/5.jpg'],
+        poster: 'images/2.jpg'
+    },
+    {
+        date: '27.06.2025',
+        dayName: 'П\'ятниця',
+        name: 'Friday Night Bass',
+        folder: '2025-06-27',
+        images: ['images/3.jpg', 'images/4.jpg', 'images/5.jpg'],
+        poster: 'images/3.jpg'
+    },
+    {
+        date: '28.06.2025',
+        dayName: 'Субота',
+        name: 'Hip-Hop Night',
+        folder: '2025-06-28',
+        images: ['images/4.jpg', 'images/5.jpg', 'images/1.jpg'],
+        poster: 'images/4.jpg'
+    },
+    {
+        date: '04.07.2025',
+        dayName: 'П\'ятниця',
+        name: 'Techno Warehouse',
+        folder: '2025-07-04',
+        images: ['images/5.jpg', 'images/1.jpg', 'images/2.jpg'],
+        poster: 'images/5.jpg'
+    },
+    {
+        date: '05.07.2025',
+        dayName: 'Субота',
+        name: 'Grand Opening Summer',
+        folder: '2025-07-05',
+        images: ['images/1.jpg', 'images/2.jpg', 'images/3.jpg', 'images/4.jpg', 'images/5.jpg'],
+        poster: 'images/1.jpg'
+    }
+];
+
+// Render album cards
+var albumsContainer = document.getElementById('galleryAlbums');
+if (albumsContainer) {
+    galleryAlbums.forEach(function(album, idx) {
+        var card = document.createElement('div');
+        card.className = 'gallery__album';
+        card.dataset.index = idx;
+        card.innerHTML =
+            '<img src="' + album.poster + '" alt="' + album.name + '" class="gallery__album-poster">' +
+            '<div class="gallery__album-overlay">' +
+                '<div class="gallery__album-date">' + album.dayName + ' · ' + album.date + '</div>' +
+                '<div class="gallery__album-name">' + album.name + '</div>' +
+                '<div class="gallery__album-count"><span>' + album.images.length + '</span> фото</div>' +
+            '</div>';
+        card.addEventListener('click', function() { openLightbox(idx); });
+        albumsContainer.appendChild(card);
+    });
+    observeElements();
+}
+
+// ===== Lightbox =====
+var lightbox = document.getElementById('lightbox');
+var lightboxImg = document.getElementById('lightboxImg');
+var lightboxTitle = document.getElementById('lightboxTitle');
+var lightboxCounter = document.getElementById('lightboxCounter');
+var lightboxClose = document.getElementById('lightboxClose');
+var lightboxPrev = document.getElementById('lightboxPrev');
+var lightboxNext = document.getElementById('lightboxNext');
+var lightboxDownload = document.getElementById('lightboxDownload');
+var lightboxBody = document.getElementById('lightboxBody');
+
+var lbCurrentAlbum = null;
+var lbCurrentIdx = 0;
+var lbScale = 1;
+var lbTranslateX = 0;
+var lbTranslateY = 0;
+
+function openLightbox(albumIdx) {
+    lbCurrentAlbum = galleryAlbums[albumIdx];
+    lbCurrentIdx = 0;
+    lbScale = 1;
+    lbTranslateX = 0;
+    lbTranslateY = 0;
+    lightbox.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    renderLightboxImg();
+}
+
+function closeLightbox() {
+    lightbox.classList.remove('active');
+    document.body.style.overflow = '';
+    lbScale = 1;
+    lbTranslateX = 0;
+    lbTranslateY = 0;
+    if (lightboxImg) {
+        lightboxImg.style.transform = '';
+    }
+}
+
+function renderLightboxImg() {
+    if (!lbCurrentAlbum) return;
+    lightboxImg.src = lbCurrentAlbum.images[lbCurrentIdx];
+    lightboxImg.alt = lbCurrentAlbum.name;
+    lightboxTitle.textContent = lbCurrentAlbum.name + ' — ' + lbCurrentAlbum.date;
+    lightboxCounter.textContent = (lbCurrentIdx + 1) + ' / ' + lbCurrentAlbum.images.length;
+    lbScale = 1;
+    lbTranslateX = 0;
+    lbTranslateY = 0;
+    lightboxImg.style.transform = '';
+}
+
+function lbNext() {
+    if (!lbCurrentAlbum) return;
+    lbCurrentIdx = (lbCurrentIdx + 1) % lbCurrentAlbum.images.length;
+    renderLightboxImg();
+}
+
+function lbPrev() {
+    if (!lbCurrentAlbum) return;
+    lbCurrentIdx = (lbCurrentIdx - 1 + lbCurrentAlbum.images.length) % lbCurrentAlbum.images.length;
+    renderLightboxImg();
+}
+
+function lbDownload() {
+    if (!lbCurrentAlbum) return;
+    var src = lbCurrentAlbum.images[lbCurrentIdx];
+    var a = document.createElement('a');
+    a.href = src;
+    a.download = 'ORPHEUM_' + lbCurrentAlbum.folder + '_' + (lbCurrentIdx + 1) + '.jpg';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+if (lightboxPrev) lightboxPrev.addEventListener('click', lbPrev);
+if (lightboxNext) lightboxNext.addEventListener('click', lbNext);
+if (lightboxDownload) lightboxDownload.addEventListener('click', lbDownload);
+
+// Close on backdrop click
+if (lightboxBody) {
+    lightboxBody.addEventListener('click', function(e) {
+        if (e.target === lightboxBody) closeLightbox();
+    });
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', function(e) {
+    if (!lightbox.classList.contains('active')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') lbPrev();
+    if (e.key === 'ArrowRight') lbNext();
 });
 
-var style = document.createElement('style');
-style.textContent = '.visible { opacity: 1 !important; transform: translateY(0) !important; }';
-document.head.appendChild(style);
+// ===== Touch: swipe + pinch-to-zoom =====
+var touchStartX = 0;
+var touchStartY = 0;
+var touchDist = 0;
+var isSwiping = false;
+var isPinching = false;
+
+function getTouchDist(t) {
+    var dx = t[0].clientX - t[1].clientX;
+    var dy = t[0].clientY - t[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+}
+
+if (lightboxBody) {
+    lightboxBody.addEventListener('touchstart', function(e) {
+        if (e.touches.length === 1) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            isSwiping = true;
+            isPinching = false;
+        } else if (e.touches.length === 2) {
+            isPinching = true;
+            isSwiping = false;
+            touchDist = getTouchDist(e.touches);
+        }
+    }, { passive: true });
+
+    lightboxBody.addEventListener('touchmove', function(e) {
+        if (isPinching && e.touches.length === 2) {
+            e.preventDefault();
+            var newDist = getTouchDist(e.touches);
+            var scaleDelta = newDist / touchDist;
+            lbScale = Math.min(Math.max(lbScale * scaleDelta, 0.5), 5);
+            touchDist = newDist;
+            applyTransform();
+        } else if (isSwiping && e.touches.length === 1 && lbScale <= 1) {
+            var dx = e.touches[0].clientX - touchStartX;
+            lightboxImg.style.transform = 'translateX(' + dx + 'px)';
+        }
+    }, { passive: false });
+
+    lightboxBody.addEventListener('touchend', function(e) {
+        if (isPinching) {
+            isPinching = false;
+            if (lbScale < 1) { lbScale = 1; applyTransform(); }
+        } else if (isSwiping && lbScale <= 1) {
+            var dx = e.changedTouches[0].clientX - touchStartX;
+            if (Math.abs(dx) > 60) {
+                if (dx < 0) lbNext(); else lbPrev();
+            }
+            lightboxImg.style.transform = '';
+        }
+        isSwiping = false;
+    }, { passive: true });
+
+    // Double-tap to zoom
+    var lastTap = 0;
+    lightboxBody.addEventListener('touchend', function(e) {
+        var now = Date.now();
+        if (now - lastTap < 300 && e.touches.length === 0) {
+            if (lbScale > 1) { lbScale = 1; lbTranslateX = 0; lbTranslateY = 0; }
+            else { lbScale = 2.5; }
+            applyTransform();
+        }
+        lastTap = now;
+    });
+}
+
+function applyTransform() {
+    if (lightboxImg) {
+        lightboxImg.style.transition = 'transform 0.2s ease';
+        lightboxImg.style.transform = 'scale(' + lbScale + ') translate(' + lbTranslateX + 'px, ' + lbTranslateY + 'px)';
+        setTimeout(function() { lightboxImg.style.transition = ''; }, 200);
+    }
+}
+
+// Mouse wheel zoom for desktop
+if (lightboxBody) {
+    lightboxBody.addEventListener('wheel', function(e) {
+        if (!lightbox.classList.contains('active')) return;
+        e.preventDefault();
+        var delta = e.deltaY > 0 ? 0.9 : 1.1;
+        lbScale = Math.min(Math.max(lbScale * delta, 0.5), 5);
+        applyTransform();
+    }, { passive: false });
+}
