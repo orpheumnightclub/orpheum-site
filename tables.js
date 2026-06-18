@@ -664,6 +664,8 @@ function updateDays() {
     var curDay = bookDay.value;
     bookDay.innerHTML = '<option value="">День</option>';
     for (var d = 1; d <= dim; d++) {
+        var dayOfWeek = new Date(y, m - 1, d).getDay();
+        if (dayOfWeek !== 5 && dayOfWeek !== 6) continue;
         var o = document.createElement('option');
         o.value = padZero(d); o.textContent = d;
         bookDay.appendChild(o);
@@ -700,6 +702,14 @@ document.getElementById('tableBookingForm').addEventListener('submit', function(
     if (!date || date.length < 10) return;
     if (!time) return;
     if (!guests || guests < 1) return;
+
+    var dateParts = date.split('.');
+    var bookingDate = new Date(parseInt(dateParts[2]), parseInt(dateParts[1]) - 1, parseInt(dateParts[0]));
+    var bookingDay = bookingDate.getDay();
+    if (bookingDay !== 5 && bookingDay !== 6) {
+        alert('Бронювання доступне тільки на п\'ятницю та суботу');
+        return;
+    }
 
     var table = null;
     Object.keys(tablesConfig).forEach(function(floor) {

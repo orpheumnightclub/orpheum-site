@@ -195,7 +195,7 @@ var galleryAlbums = [
 
 // ===== Events data =====
 var eventsData = [
-    { day: '19', month: 'Черв', name: 'День Фермера', time: '22:00 — 06:00', dj: 'RESIDENT DJs', price: '100 ₴', banner: 'https://res.cloudinary.com/deiitwupc/image/upload/v1781790264/orpheum/images/banners/2026-06-19.jpg', date: '2026-06-19' }
+    { day: '19', month: 'Черв', name: 'День Фермера', time: '21:00 — 03:00', dj: 'RESIDENT DJs', price: '100 ₴', banner: 'https://res.cloudinary.com/deiitwupc/image/upload/v1781790264/orpheum/images/banners/2026-06-19.jpg', date: '2026-06-19' }
 ];
 
 // Render events
