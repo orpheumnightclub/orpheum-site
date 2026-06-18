@@ -18,12 +18,6 @@ if (match) {
 
 const folders = [
     'images/banners',
-    'images/2025-06-20/poster',
-    'images/2025-06-21/poster',
-    'images/2025-06-27/poster',
-    'images/2025-06-28/poster',
-    'images/2025-07-04/poster',
-    'images/2025-07-05/poster',
     'images/2026-06-19/poster',
     'images/2026-06-19'
 ];

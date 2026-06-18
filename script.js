@@ -190,64 +190,12 @@ var galleryAlbums = [
         folder: '2026-06-19',
         images: ['https://res.cloudinary.com/deiitwupc/image/upload/v1781790286/orpheum/images/2026-06-19/2026-06-19.png', 'https://res.cloudinary.com/deiitwupc/image/upload/v1781790289/orpheum/images/2026-06-19/2026-06-19_2.png', 'https://res.cloudinary.com/deiitwupc/image/upload/v1781790292/orpheum/images/2026-06-19/2026-06-19_3.png'],
         poster: 'https://res.cloudinary.com/deiitwupc/image/upload/v1781790284/orpheum/images/2026-06-19/poster/2026.06.19.png'
-    },
-    {
-        date: '20.06.2025',
-        dayName: 'П\'ятниця',
-        name: 'Friday Night Bass',
-        folder: '2025-06-20',
-        images: ['images/1.jpg', 'images/2.jpg', 'images/3.jpg'],
-        poster: 'https://res.cloudinary.com/deiitwupc/image/upload/v1781774609/orpheum/images/2025-06-20/poster/2026-06-20-cover.png'
-    },
-    {
-        date: '21.06.2025',
-        dayName: 'Субота',
-        name: 'Summer Vibes Open Air',
-        folder: '2025-06-21',
-        images: ['images/2.jpg', 'images/3.jpg', 'images/4.jpg', 'images/5.jpg'],
-        poster: 'https://res.cloudinary.com/deiitwupc/image/upload/v1781774611/orpheum/images/2025-06-21/poster/2026-06-21-cover.png'
-    },
-    {
-        date: '27.06.2025',
-        dayName: 'П\'ятниця',
-        name: 'Friday Night Bass',
-        folder: '2025-06-27',
-        images: ['images/3.jpg', 'images/4.jpg', 'images/5.jpg'],
-        poster: 'https://res.cloudinary.com/deiitwupc/image/upload/v1781774613/orpheum/images/2025-06-27/poster/2026-06-27-cover.png'
-    },
-    {
-        date: '28.06.2025',
-        dayName: 'Субота',
-        name: 'Hip-Hop Night',
-        folder: '2025-06-28',
-        images: ['images/4.jpg', 'images/5.jpg', 'images/1.jpg'],
-        poster: 'https://res.cloudinary.com/deiitwupc/image/upload/v1781774614/orpheum/images/2025-06-28/poster/2026-06-28-cover.png'
-    },
-    {
-        date: '04.07.2025',
-        dayName: 'П\'ятниця',
-        name: 'Techno Warehouse',
-        folder: '2025-07-04',
-        images: ['images/5.jpg', 'images/1.jpg', 'images/2.jpg'],
-        poster: 'https://res.cloudinary.com/deiitwupc/image/upload/v1781774617/orpheum/images/2025-07-04/poster/2026-07-04-cover.png'
-    },
-    {
-        date: '05.07.2025',
-        dayName: 'Субота',
-        name: 'Grand Opening Summer',
-        folder: '2025-07-05',
-        images: ['images/1.jpg', 'images/2.jpg', 'images/3.jpg', 'images/4.jpg', 'images/5.jpg'],
-        poster: 'https://res.cloudinary.com/deiitwupc/image/upload/v1781774619/orpheum/images/2025-07-05/poster/2026-07-05-cover.png'
     }
 ];
 
 // ===== Events data =====
 var eventsData = [
-    { day: '19', month: 'Черв', name: 'День Фермера', time: '22:00 — 06:00', dj: 'RESIDENT DJs', price: '100 ₴', banner: 'https://res.cloudinary.com/deiitwupc/image/upload/v1781790264/orpheum/images/banners/2026-06-19.jpg', date: '2026-06-19' },
-    { day: '21', month: 'Черв', name: 'Friday Night Bass', time: '22:00 — 06:00', dj: 'DJ PROKOPCHUK', price: 'вхід вільний', banner: 'https://res.cloudinary.com/deiitwupc/image/upload/v1781774605/orpheum/images/banners/2026-06-21.jpg', date: '2026-06-21' },
-    { day: '28', month: 'Черв', name: 'Summer Vibes Open Air', time: '20:00 — 08:00', dj: 'GUEST DJ FROM KYIV', price: 'від 200 ₴', banner: 'https://res.cloudinary.com/deiitwupc/image/upload/v1781774606/orpheum/images/banners/2026-06-28.jpg', date: '2026-06-28' },
-    { day: '05', month: 'Лип', name: 'Hip-Hop Night', time: '23:00 — 06:00', dj: 'RESIDENT DJs', price: 'вхід вільний', banner: 'https://res.cloudinary.com/deiitwupc/image/upload/v1781774607/orpheum/images/banners/2026-07-05.jpg', date: '2026-07-05' },
-    { day: '06', month: 'Лип', name: 'Techno Warehouse', time: '00:00 — 10:00', dj: 'SPECIAL GUEST', price: 'від 300 ₴', banner: 'https://res.cloudinary.com/deiitwupc/image/upload/v1781774608/orpheum/images/banners/2026-07-06.jpg', date: '2026-07-06' }
+    { day: '19', month: 'Черв', name: 'День Фермера', time: '22:00 — 06:00', dj: 'RESIDENT DJs', price: '100 ₴', banner: 'https://res.cloudinary.com/deiitwupc/image/upload/v1781790264/orpheum/images/banners/2026-06-19.jpg', date: '2026-06-19' }
 ];
 
 // Render events
