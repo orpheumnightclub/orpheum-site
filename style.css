@@ -371,7 +371,7 @@ body {
 
 /* About */
 .about {
-    padding: 120px 0;
+    padding: 80px 0;
 }
 
 .about__grid {
@@ -459,7 +459,7 @@ body {
 
 /* Events */
 .events {
-    padding: 120px 0;
+    padding: 80px 0;
     background: var(--color-bg-secondary);
 }
 
@@ -598,7 +598,7 @@ body {
 
 /* Gallery */
 .gallery {
-    padding: 120px 0;
+    padding: 80px 0;
 }
 
 .gallery__title {
@@ -828,7 +828,7 @@ body {
 
 /* Booking */
 .booking {
-    padding: 120px 0;
+    padding: 80px 0;
     background: var(--color-bg-secondary);
 }
 
@@ -1023,7 +1023,7 @@ body {
 
 /* Contacts */
 .contacts {
-    padding: 120px 0;
+    padding: 80px 0;
 }
 
 .contacts__grid {
@@ -1280,6 +1280,10 @@ body {
         transform: rotate(-45deg) translate(7px, -6px);
     }
 
+    .hero {
+        min-height: 600px;
+    }
+
     .hero__actions {
         flex-direction: column;
         align-items: center;
@@ -1300,16 +1304,26 @@ body {
         height: 280px;
     }
 
+    .about,
+    .events,
+    .gallery,
+    .booking,
+    .contacts {
+        padding: 48px 0;
+    }
+
     .about__title,
     .events__title,
     .gallery__title,
     .booking__title,
     .contacts__title {
-        font-size: 36px;
+        font-size: 32px;
+        margin-bottom: 32px;
     }
 
     .about__grid {
-        gap: 48px;
+        grid-template-columns: 1fr;
+        gap: 40px;
     }
 
     .about__visual {
@@ -1317,11 +1331,11 @@ body {
     }
 
     .about__stats {
-        gap: 32px;
+        gap: 24px;
     }
 
     .gallery__albums {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr;
     }
 
     .lightbox__nav { display: none; }
@@ -1336,76 +1350,66 @@ body {
     }
 
     .event-card__content {
-        padding: 20px;
-        gap: 16px;
+        padding: 16px;
+        gap: 12px;
+    }
+
+    .event-card__date {
+        min-width: 48px;
+        padding: 8px 6px;
+    }
+
+    .event-card__day {
+        font-size: 20px;
+    }
+
+    .event-card__month {
+        font-size: 9px;
     }
 
     .event-card__name {
-        font-size: 18px;
-    }
-
-    .booking__form {
-        padding: 24px;
-    }
-
-    .footer__links {
-        flex-direction: column;
-        gap: 32px;
-    }
-
-    .mobile-menu__link {
-        font-size: 24px;
-    }
-
-    .mobile-menu__icon {
-        width: 22px;
-        height: 22px;
-    }
-
-    .mobile-menu__btn {
-        padding: 12px 32px;
-        font-size: 14px;
-    }
-}
-
-@media (max-width: 480px) {
-    .about__stats {
-        flex-direction: column;
-        gap: 24px;
-    }
-
-    .gallery__albums {
-        grid-template-columns: 1fr;
-    }
-
-    .hero__logo {
-        max-width: 90%;
-    }
-
-    .hero__subtitle {
-        font-size: 14px;
-        letter-spacing: 4px;
-    }
-
-    .hero__desc {
         font-size: 16px;
+        margin-bottom: 3px;
     }
 
-    .hero__btn {
-        padding: 14px 28px;
-        font-size: 14px;
+    .event-card__time {
+        font-size: 12px;
     }
 
-    .about__card {
-        padding: 20px;
+    .event-card__dj {
+        font-size: 10px;
     }
 
-    .event-card {
-        padding: 16px;
+    .event-card__price {
+        font-size: 11px;
+        padding: 4px 8px;
+    }
+
+    .gallery__album-name {
+        font-size: 15px;
+    }
+
+    .gallery__album-date {
+        font-size: 8px;
+        letter-spacing: 2px;
+    }
+
+    .gallery__album-count {
+        font-size: 10px;
+    }
+
+    .booking__grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
     }
 
     .booking__form {
         padding: 20px;
+    }
+
+    .contacts__grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
     }
 
     .contacts__map iframe {
@@ -1414,6 +1418,114 @@ body {
 
     .footer__top {
         grid-template-columns: 1fr;
-        gap: 40px;
+        gap: 32px;
+    }
+
+    .footer__links {
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .mobile-menu__link {
+        font-size: 22px;
+    }
+
+    .mobile-menu__icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .mobile-menu__btn {
+        padding: 12px 32px;
+        font-size: 14px;
+    }
+
+    .section-label {
+        font-size: 11px;
+        letter-spacing: 2px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        min-height: 500px;
+    }
+
+    .hero__logo {
+        max-width: 85%;
+    }
+
+    .hero__subtitle {
+        font-size: 12px;
+        letter-spacing: 3px;
+    }
+
+    .hero__desc {
+        font-size: 15px;
+        margin-bottom: 32px;
+    }
+
+    .hero__btn {
+        padding: 12px 24px;
+        font-size: 14px;
+    }
+
+    .about__title,
+    .events__title,
+    .gallery__title,
+    .booking__title,
+    .contacts__title {
+        font-size: 26px;
+        margin-bottom: 24px;
+    }
+
+    .about__card {
+        padding: 16px;
+    }
+
+    .event-card {
+        min-height: 140px;
+    }
+
+    .event-card__content {
+        padding: 12px;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .event-card__date {
+        min-width: 42px;
+        padding: 6px 5px;
+    }
+
+    .event-card__day {
+        font-size: 18px;
+    }
+
+    .event-card__name {
+        font-size: 15px;
+    }
+
+    .event-card__price {
+        font-size: 10px;
+        padding: 3px 6px;
+    }
+
+    .booking__form {
+        padding: 16px;
+    }
+
+    .mobile-menu__link {
+        font-size: 20px;
+        gap: 10px;
+    }
+
+    .mobile-menu__icon {
+        width: 18px;
+        height: 18px;
+    }
+
+    .footer__bottom p {
+        font-size: 12px;
     }
 }
