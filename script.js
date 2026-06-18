@@ -311,32 +311,41 @@ function lbPrev() {
 function lbDownload() {
     if (!lbCurrentAlbum) return;
     var src = lbCurrentAlbum.images[lbCurrentIdx];
-    var a = document.createElement('a');
-    a.href = src;
-    a.download = 'ORPHEUM_' + lbCurrentAlbum.folder + '_' + (lbCurrentIdx + 1) + '.jpg';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-}
-
-if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
-if (lightboxPrev) lightboxPrev.addEventListener('click', lbPrev);
-if (lightboxNext) lightboxNext.addEventListener('click', lbNext);
-if (lightboxDownload) lightboxDownload.addEventListener('click', lbDownload);
-
-if (lightboxImg) {
-    lightboxImg.addEventListener('click', function(e) {
-        var rect = lightboxImg.getBoundingClientRect();
-        var clickX = e.clientX - rect.left;
-        if (clickX < rect.width / 2) lbPrev(); else lbNext();
+    var ext = src.split('.').pop().split('?')[0] || 'png';
+    var filename = 'ORPHEUM_' + lbCurrentAlbum.folder + '_' + (lbCurrentIdx + 1) + '.' + ext;
+    fetch(src).then(function(r) { return r.blob(); }).then(function(blob) {
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }).catch(function() {
+        window.open(src, '_blank');
     });
 }
 
-// Close on backdrop click
+if (lightboxClose) lightboxClose.onclick = closeLightbox;
+if (lightboxPrev) lightboxPrev.onclick = lbPrev;
+if (lightboxNext) lightboxNext.onclick = lbNext;
+if (lightboxDownload) lightboxDownload.onclick = lbDownload;
+
+var lightboxSlide = document.getElementById('lightboxSlide');
+if (lightboxSlide) {
+    lightboxSlide.onclick = function(e) {
+        var rect = lightboxSlide.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        if (x < rect.width * 0.35) lbPrev();
+        else if (x > rect.width * 0.65) lbNext();
+    };
+}
+
 if (lightboxBody) {
-    lightboxBody.addEventListener('click', function(e) {
+    lightboxBody.onclick = function(e) {
         if (e.target === lightboxBody) closeLightbox();
-    });
+    };
 }
 
 // Keyboard navigation
