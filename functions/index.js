@@ -22,6 +22,45 @@ exports.webhook = onRequest(async (req, res) => {
 
     const body = req.body;
 
+    if (body.message) {
+        const msg = body.message;
+        const chatId = msg.chat.id;
+        const text = msg.text || "";
+
+        if (text === "/start") {
+            const welcomeText =
+                "🔥 *Ласкаво просимо до ORPHEUM!*\n\n" +
+                "Нічний клуб у Шостці — місце, де ніч оживає.\n\n" +
+                "📅 *Найближча вечірка:*\n" +
+                "🎉 День Фермера\n" +
+                "🗓 19 червня (пт)\n" +
+                "⏰ 21:00 — 03:00\n" +
+                "💰 100 ₴ вхід\n\n" +
+                "Натисни кнопку нижче, щоб обрати стіл та забронювати 👇";
+
+            const keyboard = {
+                inline_keyboard: [
+                    [
+                        { text: "🪑 Забронювати стіл", url: "https://orpheum.site/tables.html" }
+                    ],
+                    [
+                        { text: "📸 Галерея", url: "https://orpheum.site/#gallery" },
+                        { text: "📞 Контакти", url: "https://orpheum.site/#contacts" }
+                    ]
+                ]
+            };
+
+            await tgApi("sendMessage", {
+                chat_id: chatId,
+                text: welcomeText,
+                parse_mode: "Markdown",
+                reply_markup: keyboard,
+            });
+
+            return res.status(200).send("ok");
+        }
+    }
+
     if (body.callback_query) {
         const cq = body.callback_query;
         const data = cq.data;
@@ -114,4 +153,24 @@ exports.setWebhook = onRequest(async (req, res) => {
     if (!url) { res.status(400).send("missing url param"); return; }
     const result = await tgApi("setWebhook", { url: url + "/webhook" });
     res.json(result);
+});
+
+exports.setBotMenu = onRequest(async (req, res) => {
+    const baseUrl = req.query.url || "https://orpheum.site";
+
+    await tgApi("setMyCommands", {
+        commands: [
+            { command: "start", description: "Почати" }
+        ]
+    });
+
+    await tgApi("setChatMenuButton", {
+        menu_button: {
+            type: "web_app",
+            text: "🪑 Забронювати стіл",
+            web_app: { url: baseUrl + "/tables.html" }
+        }
+    });
+
+    res.json({ ok: true, message: "Bot menu configured" });
 });

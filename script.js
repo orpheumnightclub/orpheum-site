@@ -324,6 +324,14 @@ if (lightboxPrev) lightboxPrev.addEventListener('click', lbPrev);
 if (lightboxNext) lightboxNext.addEventListener('click', lbNext);
 if (lightboxDownload) lightboxDownload.addEventListener('click', lbDownload);
 
+if (lightboxImg) {
+    lightboxImg.addEventListener('click', function(e) {
+        var rect = lightboxImg.getBoundingClientRect();
+        var clickX = e.clientX - rect.left;
+        if (clickX < rect.width / 2) lbPrev(); else lbNext();
+    });
+}
+
 // Close on backdrop click
 if (lightboxBody) {
     lightboxBody.addEventListener('click', function(e) {
