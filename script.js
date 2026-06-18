@@ -235,18 +235,19 @@ var galleryAlbums = [
 
 // ===== Events data =====
 var eventsData = [
-    { day: '21', month: 'Черв', name: 'Friday Night Bass', time: '22:00 — 06:00', dj: 'DJ PROKOPCHUK', price: 'вхід вільний', banner: 'images/banners/2026-06-21.jpg' },
-    { day: '28', month: 'Черв', name: 'Summer Vibes Open Air', time: '20:00 — 08:00', dj: 'GUEST DJ FROM KYIV', price: 'від 200 ₴', banner: 'images/banners/2026-06-28.jpg' },
-    { day: '05', month: 'Лип', name: 'Hip-Hop Night', time: '23:00 — 06:00', dj: 'RESIDENT DJs', price: 'вхід вільний', banner: 'images/banners/2026-07-05.jpg' },
-    { day: '06', month: 'Лип', name: 'Techno Warehouse', time: '00:00 — 10:00', dj: 'SPECIAL GUEST', price: 'від 300 ₴', banner: 'images/banners/2026-07-06.jpg' }
+    { day: '21', month: 'Черв', name: 'Friday Night Bass', time: '22:00 — 06:00', dj: 'DJ PROKOPCHUK', price: 'вхід вільний', banner: 'images/banners/2026-06-21.jpg', date: '2026-06-21' },
+    { day: '28', month: 'Черв', name: 'Summer Vibes Open Air', time: '20:00 — 08:00', dj: 'GUEST DJ FROM KYIV', price: 'від 200 ₴', banner: 'images/banners/2026-06-28.jpg', date: '2026-06-28' },
+    { day: '05', month: 'Лип', name: 'Hip-Hop Night', time: '23:00 — 06:00', dj: 'RESIDENT DJs', price: 'вхід вільний', banner: 'images/banners/2026-07-05.jpg', date: '2026-07-05' },
+    { day: '06', month: 'Лип', name: 'Techno Warehouse', time: '00:00 — 10:00', dj: 'SPECIAL GUEST', price: 'від 300 ₴', banner: 'images/banners/2026-07-06.jpg', date: '2026-07-06' }
 ];
 
 // Render events
 var eventsGrid = document.getElementById('eventsGrid');
 if (eventsGrid) {
     eventsData.forEach(function(ev) {
-        var card = document.createElement('div');
+        var card = document.createElement('a');
         card.className = 'event-card';
+        card.href = 'tables.html?date=' + ev.date;
         card.innerHTML =
             '<div class="event-card__bg" style="background-image:url(\'' + ev.banner + '\')"></div>' +
             '<div class="event-card__overlay"></div>' +

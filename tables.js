@@ -567,11 +567,19 @@ document.getElementById('closeShiftBtn').addEventListener('click', function() {
 var selectedDate = getTodayDate();
 var dateFilter = document.getElementById('dateFilter');
 if (dateFilter) {
-    var now = new Date();
-    var yyyy = now.getFullYear();
-    var mm = (now.getMonth() + 1) < 10 ? '0' + (now.getMonth() + 1) : '' + (now.getMonth() + 1);
-    var dd = now.getDate() < 10 ? '0' + now.getDate() : '' + now.getDate();
-    dateFilter.value = yyyy + '-' + mm + '-' + dd;
+    var urlParams = new URLSearchParams(window.location.search);
+    var paramDate = urlParams.get('date');
+    if (paramDate && /^\d{4}-\d{2}-\d{2}$/.test(paramDate)) {
+        dateFilter.value = paramDate;
+        var parts = paramDate.split('-');
+        selectedDate = parts[2] + '.' + parts[1] + '.' + parts[0];
+    } else {
+        var now = new Date();
+        var yyyy = now.getFullYear();
+        var mm = (now.getMonth() + 1) < 10 ? '0' + (now.getMonth() + 1) : '' + (now.getMonth() + 1);
+        var dd = now.getDate() < 10 ? '0' + now.getDate() : '' + now.getDate();
+        dateFilter.value = yyyy + '-' + mm + '-' + dd;
+    }
     dateFilter.addEventListener('change', function() {
         var parts = this.value.split('-');
         if (parts.length === 3) {
@@ -579,6 +587,7 @@ if (dateFilter) {
             renderAll();
         }
     });
+    renderAll();
 }
 
 document.querySelectorAll('.floor-btn').forEach(function(btn) {
