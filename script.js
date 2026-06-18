@@ -189,7 +189,7 @@ var galleryAlbums = [
         name: 'Friday Night Bass',
         folder: '2025-06-20',
         images: ['images/1.jpg', 'images/2.jpg', 'images/3.jpg'],
-        poster: 'images/1.jpg'
+        poster: 'images/2025-06-20/poster/2026-06-20-cover.png'
     },
     {
         date: '21.06.2025',
@@ -197,7 +197,7 @@ var galleryAlbums = [
         name: 'Summer Vibes Open Air',
         folder: '2025-06-21',
         images: ['images/2.jpg', 'images/3.jpg', 'images/4.jpg', 'images/5.jpg'],
-        poster: 'images/2.jpg'
+        poster: 'images/2025-06-21/poster/2026-06-21-cover.png'
     },
     {
         date: '27.06.2025',
@@ -205,7 +205,7 @@ var galleryAlbums = [
         name: 'Friday Night Bass',
         folder: '2025-06-27',
         images: ['images/3.jpg', 'images/4.jpg', 'images/5.jpg'],
-        poster: 'images/3.jpg'
+        poster: 'images/2025-06-27/poster/2026-06-27-cover.png'
     },
     {
         date: '28.06.2025',
@@ -213,7 +213,7 @@ var galleryAlbums = [
         name: 'Hip-Hop Night',
         folder: '2025-06-28',
         images: ['images/4.jpg', 'images/5.jpg', 'images/1.jpg'],
-        poster: 'images/4.jpg'
+        poster: 'images/2025-06-28/poster/2026-06-28-cover.png'
     },
     {
         date: '04.07.2025',
@@ -221,7 +221,7 @@ var galleryAlbums = [
         name: 'Techno Warehouse',
         folder: '2025-07-04',
         images: ['images/5.jpg', 'images/1.jpg', 'images/2.jpg'],
-        poster: 'images/5.jpg'
+        poster: 'images/2025-07-04/poster/2026-07-04-cover.png'
     },
     {
         date: '05.07.2025',
@@ -229,7 +229,7 @@ var galleryAlbums = [
         name: 'Grand Opening Summer',
         folder: '2025-07-05',
         images: ['images/1.jpg', 'images/2.jpg', 'images/3.jpg', 'images/4.jpg', 'images/5.jpg'],
-        poster: 'images/1.jpg'
+        poster: 'images/2025-07-05/poster/2026-07-05-cover.png'
     }
 ];
 
@@ -241,7 +241,7 @@ if (albumsContainer) {
         card.className = 'gallery__album';
         card.dataset.index = idx;
         card.innerHTML =
-            '<img src="' + album.poster + '" alt="' + album.name + '" class="gallery__album-poster">' +
+            '<img src="' + album.poster + '" alt="' + album.name + '" class="gallery__album-poster" loading="lazy">' +
             '<div class="gallery__album-overlay">' +
                 '<div class="gallery__album-date">' + album.dayName + ' · ' + album.date + '</div>' +
                 '<div class="gallery__album-name">' + album.name + '</div>' +
