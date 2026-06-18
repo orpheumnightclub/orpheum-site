@@ -311,20 +311,8 @@ function lbPrev() {
 function lbDownload() {
     if (!lbCurrentAlbum) return;
     var src = lbCurrentAlbum.images[lbCurrentIdx];
-    var ext = src.split('.').pop().split('?')[0] || 'png';
-    var filename = 'ORPHEUM_' + lbCurrentAlbum.folder + '_' + (lbCurrentIdx + 1) + '.' + ext;
-    fetch(src).then(function(r) { return r.blob(); }).then(function(blob) {
-        var url = URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    }).catch(function() {
-        window.open(src, '_blank');
-    });
+    var url = src.includes('?') ? src + '&fl_attachment' : src + '?fl_attachment';
+    window.open(url, '_blank');
 }
 
 if (lightboxClose) lightboxClose.onclick = closeLightbox;
