@@ -48,20 +48,18 @@ function parseInfoFile(folderPath) {
 
 function findEventImages(folderPath, folderName) {
     const files = fs.readdirSync(folderPath);
-    const poster = files.find(f => {
+    const imgFiles = files.filter(f => f !== 'info.txt' && /\.(jpg|jpeg|png|webp)$/i.test(f));
+
+    const poster = imgFiles.find(f => {
         const base = path.basename(f, path.extname(f));
-        return base === folderName && /\.(jpg|jpeg|png|webp)$/i.test(f);
+        return base === folderName + '_poster';
     });
-    const banner = files.find(f => {
+    const banner = imgFiles.find(f => {
         const base = path.basename(f, path.extname(f));
-        return base === folderName + '_banner' && /\.(jpg|jpeg|png|webp)$/i.test(f);
+        return base === folderName + '_banner';
     });
-    const extras = files.filter(f => {
-        if (f === 'info.txt') return false;
-        if (f === poster || f === banner) return false;
-        return /\.(jpg|jpeg|png|webp)$/i.test(f);
-    });
-    return { poster, banner, extras };
+    const photos = imgFiles.filter(f => f !== poster && f !== banner).sort();
+    return { poster, banner, photos };
 }
 
 async function uploadToCloudinary(localPath, publicId) {
@@ -74,6 +72,13 @@ async function uploadToCloudinary(localPath, publicId) {
         ]
     });
     return result.secure_url;
+}
+
+function isAlreadyUploaded(localPath, folderName, fileName) {
+    const base = path.basename(fileName, path.extname(fileName));
+    const ext = path.extname(fileName).substring(1);
+    const mapKey = 'images/' + folderName + '/' + base + '.' + ext;
+    return urlMap[mapKey] || null;
 }
 
 async function processEvent(folderName) {
@@ -95,26 +100,53 @@ async function processEvent(folderName) {
     console.log('\nEvent:', info.name, '(' + folderName + ')');
 
     const urls = {};
+
     if (images.poster) {
-        const posterPath = path.join(folderPath, images.poster);
-        const publicId = 'orpheum/images/' + folderName + '/poster/' + path.basename(images.poster, path.extname(images.poster));
-        urls.poster = await uploadToCloudinary(posterPath, publicId);
-        console.log('  Poster:', urls.poster);
+        const posterKey = 'images/' + folderName + '/' + images.poster;
+        const existing = urlMap[posterKey];
+        if (existing) {
+            urls.poster = existing;
+            console.log('  Poster: cached');
+        } else {
+            const posterPath = path.join(folderPath, images.poster);
+            const publicId = 'orpheum/images/' + folderName + '/poster/' + folderName;
+            urls.poster = await uploadToCloudinary(posterPath, publicId);
+            urlMap[posterKey] = urls.poster;
+            console.log('  Poster:', urls.poster);
+        }
     }
+
     if (images.banner) {
-        const bannerPath = path.join(folderPath, images.banner);
-        const publicId = 'orpheum/images/banners/' + folderName;
-        urls.banner = await uploadToCloudinary(bannerPath, publicId);
-        console.log('  Banner:', urls.banner);
+        const bannerKey = 'images/' + folderName + '/' + images.banner;
+        const existing = urlMap[bannerKey];
+        if (existing) {
+            urls.banner = existing;
+            console.log('  Banner: cached');
+        } else {
+            const bannerPath = path.join(folderPath, images.banner);
+            const publicId = 'orpheum/images/banners/' + folderName;
+            urls.banner = await uploadToCloudinary(bannerPath, publicId);
+            urlMap[bannerKey] = urls.banner;
+            console.log('  Banner:', urls.banner);
+        }
     }
-    for (const extra of images.extras) {
-        const extraPath = path.join(folderPath, extra);
-        const base = path.basename(extra, path.extname(extra));
-        const publicId = 'orpheum/images/' + folderName + '/' + base;
-        const url = await uploadToCloudinary(extraPath, publicId);
-        if (!urls.extras) urls.extras = [];
-        urls.extras.push(url);
-        console.log('  Photo:', url);
+
+    const newPhotoUrls = [];
+    for (const photo of images.photos) {
+        const photoKey = 'images/' + folderName + '/' + photo;
+        const existing = urlMap[photoKey];
+        if (existing) {
+            newPhotoUrls.push(existing);
+            console.log('  Photo: cached', photo);
+        } else {
+            const photoPath = path.join(folderPath, photo);
+            const base = path.basename(photo, path.extname(photo));
+            const publicId = 'orpheum/images/' + folderName + '/' + base;
+            const url = await uploadToCloudinary(photoPath, publicId);
+            urlMap[photoKey] = url;
+            newPhotoUrls.push(url);
+            console.log('  Photo:', photo, '->', url);
+        }
     }
 
     const parts = folderName.split('-');
@@ -127,7 +159,7 @@ async function processEvent(folderName) {
 
     const allImageUrls = [];
     if (urls.poster) allImageUrls.push(urls.poster);
-    if (urls.extras) allImageUrls.push(...urls.extras);
+    allImageUrls.push(...newPhotoUrls);
 
     return {
         folderName,
@@ -138,7 +170,8 @@ async function processEvent(folderName) {
         dayName: DAYS_UA[dayOfWeek],
         posterUrl: urls.poster || null,
         bannerUrl: urls.banner || null,
-        imageUrls: allImageUrls
+        imageUrls: allImageUrls,
+        photoCount: newPhotoUrls.length
     };
 }
 
@@ -146,65 +179,75 @@ function updateScriptJs(events) {
     let content = fs.readFileSync(scriptPath, 'utf8');
 
     for (const ev of events) {
-        if (content.includes("'" + ev.folderName + "'")) {
-            console.log('Already in script.js:', ev.folderName);
-            continue;
-        }
-
-        const albumEntry =
-            '    {\n' +
-            '        date: \'' + ev.dateStr + '\',\n' +
-            '        dayName: \'' + ev.dayName + '\',\n' +
-            '        name: \'' + ev.info.name.replace(/'/g, "\\'") + '\',\n' +
-            '        folder: \'' + ev.folderName + '\',\n' +
-            '        images: [' + ev.imageUrls.map(u => '\'' + u + '\'').join(', ') + '],\n' +
-            '        poster: \'' + (ev.posterUrl || '') + '\'\n' +
-            '    }';
-
-        const albumInsertBefore = '];';
         const albumRegex = /(var galleryAlbums = \[\s*\n)([\s\S]*?)(\n\];)/;
         const albumMatch = content.match(albumRegex);
-        if (albumMatch) {
+        if (!albumMatch) continue;
+
+        const existingAlbum = albumMatch[2].includes("'" + ev.folderName + "'");
+
+        if (existingAlbum) {
+            const entryRegex = new RegExp(
+                "(\\{[\\s\\S]*?folder: '" + ev.folderName.replace(/-/g, '\\-') + "'[\\s\\S]*?images: \\[)([\\s\\S]*?)(\\][\\s\\S]*?\\})"
+            );
+            const entryMatch = content.match(entryRegex);
+            if (entryMatch) {
+                const existingUrls = entryMatch[2].split(',').map(u => u.trim().replace(/'/g, '')).filter(u => u.length > 0);
+                const newUrls = ev.imageUrls.filter(u => !existingUrls.includes(u));
+                if (newUrls.length > 0) {
+                    const combined = [...existingUrls, ...newUrls];
+                    const newImagesStr = combined.map(u => "'" + u + "'").join(', ');
+                    content = content.replace(entryRegex, '$1' + newImagesStr + '$3');
+                    console.log('Album updated:', ev.folderName, '(+' + newUrls.length + ' photos)');
+                } else {
+                    console.log('Album unchanged:', ev.folderName, '(no new photos)');
+                }
+            }
+        } else {
+            const albumEntry =
+                '    {\n' +
+                '        date: \'' + ev.dateStr + '\',\n' +
+                '        dayName: \'' + ev.dayName + '\',\n' +
+                '        name: \'' + ev.info.name.replace(/'/g, "\\'") + '\',\n' +
+                '        folder: \'' + ev.folderName + '\',\n' +
+                '        images: [' + ev.imageUrls.map(u => "'" + u + "'").join(', ') + '],\n' +
+                '        poster: \'' + (ev.posterUrl || '') + '\'\n' +
+                '    }';
+
             const lastEntryEnd = albumMatch[2].trimEnd();
             const hasTrailingComma = lastEntryEnd.endsWith(',');
             const comma = hasTrailingComma ? '' : ',';
             content = content.replace(albumRegex, '$1' + lastEntryEnd + comma + '\n' + albumEntry + '\n$3');
+            console.log('Album added:', ev.folderName);
         }
-
-        const timeStr = ev.info.time || '21:00 — 03:00';
-        const priceStr = ev.info.price || '';
-        const djStr = ev.info.dj || 'RESIDENT DJs';
-
-        const eventEntry =
-            '    { day: \'' + ev.day + '\', month: \'' + ev.monthShort + '\', name: \'' + ev.info.name.replace(/'/g, "\\'") + '\', time: \'' + timeStr + '\', dj: \'' + djStr + '\', price: \'' + priceStr + '\', banner: \'' + (ev.bannerUrl || '') + '\', date: \'' + ev.folderName + '\' }';
 
         const eventRegex = /(var eventsData = \[\s*\n)([\s\S]*?)(\n\];)/;
         const eventMatch = content.match(eventRegex);
-        if (eventMatch) {
+        if (!eventMatch) continue;
+
+        const existingEvent = eventMatch[2].includes("'" + ev.folderName + "'");
+        if (!existingEvent) {
+            const timeStr = ev.info.time || '21:00 — 03:00';
+            const priceStr = ev.info.price || '';
+            const djStr = ev.info.dj || 'RESIDENT DJs';
+
+            const eventEntry =
+                '    { day: \'' + ev.day + '\', month: \'' + ev.monthShort + '\', name: \'' + ev.info.name.replace(/'/g, "\\'") + '\', time: \'' + timeStr + '\', dj: \'' + djStr + '\', price: \'' + priceStr + '\', banner: \'' + (ev.bannerUrl || '') + '\', date: \'' + ev.folderName + '\' }';
+
             const lastEntryEnd = eventMatch[2].trimEnd();
             const hasTrailingComma = lastEntryEnd.endsWith(',');
             const comma = hasTrailingComma ? '' : ',';
             content = content.replace(eventRegex, '$1' + lastEntryEnd + comma + '\n' + eventEntry + '\n$3');
+            console.log('Event added:', ev.folderName);
         }
     }
 
     fs.writeFileSync(scriptPath, content, 'utf8');
-    console.log('\nscript.js updated');
+    console.log('script.js saved');
 }
 
-function updateUrlMap(events) {
-    for (const ev of events) {
-        if (ev.posterUrl) urlMap['images/' + ev.folderName + '/poster/' + ev.folderName] = ev.posterUrl;
-        if (ev.bannerUrl) urlMap['images/banners/' + ev.folderName + '.jpg'] = ev.bannerUrl;
-        if (ev.imageUrls) {
-            ev.imageUrls.forEach((url, i) => {
-                const suffix = i === 0 ? '' : '_' + (i + 1);
-                urlMap['images/' + ev.folderName + '/' + ev.folderName + suffix + '.png'] = url;
-            });
-        }
-    }
+function saveUrlMap() {
     fs.writeFileSync(urlMapPath, JSON.stringify(urlMap, null, 2), 'utf8');
-    console.log('cloudinary-urls.json updated');
+    console.log('cloudinary-urls.json saved');
 }
 
 async function main() {
@@ -216,21 +259,20 @@ async function main() {
     } else {
         folders = fs.readdirSync(imagesDir).filter(f => {
             const fp = path.join(imagesDir, f);
-            if (!fs.statSync(fp).isDirectory()) return false;
-            const infoPath = path.join(fp, 'info.txt');
-            if (!fs.existsSync(infoPath)) return false;
-            return !urlMap['images/' + f + '/poster/' + f];
+            return fs.statSync(fp).isDirectory() && fs.existsSync(path.join(fp, 'info.txt'));
         });
     }
 
     if (folders.length === 0) {
-        console.log('No new events found.');
-        console.log('Usage: node add-event.js [folder-name]');
-        console.log('Or create images/YYYY-MM-DD/info.txt and run without args.');
+        console.log('No events found.');
+        console.log('');
+        console.log('Usage:');
+        console.log('  node add-event.js 2026-06-27');
+        console.log('  node add-event.js            (all folders with info.txt)');
         return;
     }
 
-    console.log('Found events:', folders.join(', '));
+    console.log('Events:', folders.join(', '));
 
     const results = [];
     for (const folder of folders) {
@@ -240,13 +282,11 @@ async function main() {
 
     if (results.length > 0) {
         updateScriptJs(results);
-        updateUrlMap(results);
+        saveUrlMap();
     }
 
-    console.log('\nDone! Events processed:', results.length);
-    console.log('Next steps:');
-    console.log('  1. git add . && git commit -m "add event"');
-    console.log('  2. git push');
+    console.log('\nDone! Processed:', results.length);
+    console.log('Next: git add . && git commit && git push');
 }
 
 main();
