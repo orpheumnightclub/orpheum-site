@@ -179,11 +179,10 @@ function updateScriptJs(events) {
     let content = fs.readFileSync(scriptPath, 'utf8');
 
     for (const ev of events) {
-        const albumRegex = /(var galleryAlbums = \[\s*\n)([\s\S]*?)(\n\];)/;
-        const albumMatch = content.match(albumRegex);
-        if (!albumMatch) continue;
-
-        const existingAlbum = albumMatch[2].includes("'" + ev.folderName + "'");
+        const albumStart = content.indexOf('var galleryAlbums = [');
+        if (albumStart === -1) continue;
+        const albumOpen = content.indexOf('[', albumStart + 19);
+        const existingAlbum = content.includes("'" + ev.folderName + "'");
 
         if (existingAlbum) {
             const entryRegex = new RegExp(
@@ -213,16 +212,18 @@ function updateScriptJs(events) {
                 '        poster: \'' + (ev.posterUrl || '') + '\'\n' +
                 '    }';
 
-            const lastEntryEnd = albumMatch[2].trimEnd();
-            const hasTrailingComma = lastEntryEnd.endsWith(',');
-            const comma = hasTrailingComma ? '' : ',';
-            content = content.replace(albumRegex, '$1' + lastEntryEnd + comma + '\n' + albumEntry + '\n$3');
+            const afterOpen = content.substring(albumOpen + 1);
+            const firstNewline = afterOpen.indexOf('\n');
+            const indent = afterOpen.substring(0, firstNewline).match(/^\s*/)[0];
+            const nextChar = afterOpen.trimStart()[0];
+            const needsComma = nextChar && nextChar !== ']';
+            content = content.substring(0, albumOpen + 1) + '\n' + albumEntry + (needsComma ? ',' : '') + '\n' + indent + content.substring(albumOpen + 1);
             console.log('Album added:', ev.folderName);
         }
 
-        const eventRegex = /(var eventsData = \[\s*\n)([\s\S]*?)(\n\];)/;
-        const eventMatch = content.match(eventRegex);
-        if (!eventMatch) continue;
+        const eventStart = content.indexOf('var eventsData = [');
+        if (eventStart === -1) continue;
+        const eventOpen = content.indexOf('[', eventStart + 17);
 
         const timeStr = ev.info.time || '21:00 — 03:00';
         const priceStr = ev.info.price || '';
@@ -231,7 +232,7 @@ function updateScriptJs(events) {
         const eventEntry =
             '    { day: \'' + ev.day + '\', month: \'' + ev.monthShort + '\', name: \'' + ev.info.name.replace(/'/g, "\\'") + '\', time: \'' + timeStr + '\', dj: \'' + djStr + '\', price: \'' + priceStr + '\', banner: \'' + (ev.bannerUrl || '') + '\', date: \'' + ev.folderName + '\' }';
 
-        const existingEvent = eventMatch[2].includes("'" + ev.folderName + "'");
+        const existingEvent = content.substring(eventOpen, content.indexOf('\n];', eventOpen)).includes("'" + ev.folderName + "'");
         if (existingEvent) {
             const entryRegex = new RegExp(
                 "(\\{[\\s\\S]*?date: '" + ev.folderName.replace(/-/g, '\\-') + "'[\\s\\S]*?\\})"
@@ -242,10 +243,12 @@ function updateScriptJs(events) {
                 console.log('Event updated:', ev.folderName);
             }
         } else {
-            const lastEntryEnd = eventMatch[2].trimEnd();
-            const hasTrailingComma = lastEntryEnd.endsWith(',');
-            const comma = hasTrailingComma ? '' : ',';
-            content = content.replace(eventRegex, '$1' + lastEntryEnd + comma + '\n' + eventEntry + '\n$3');
+            const afterOpen = content.substring(eventOpen + 1);
+            const firstNewline = afterOpen.indexOf('\n');
+            const indent = afterOpen.substring(0, firstNewline).match(/^\s*/)[0];
+            const nextChar = afterOpen.trimStart()[0];
+            const needsComma = nextChar && nextChar !== ']';
+            content = content.substring(0, eventOpen + 1) + '\n' + eventEntry + (needsComma ? ',' : '') + '\n' + indent + content.substring(eventOpen + 1);
             console.log('Event added:', ev.folderName);
         }
     }
