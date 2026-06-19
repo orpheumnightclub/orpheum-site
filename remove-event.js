@@ -84,20 +84,45 @@ function deleteFromCloudinary(url) {
     return cloudinary.uploader.destroy(publicId).then(r => r.result === 'ok').catch(() => false);
 }
 
+function findEntry(content, searchKey, searchValue) {
+    const idx = content.indexOf(searchKey + ": '" + searchValue + "'");
+    if (idx === -1) return null;
+
+    let start = idx;
+    while (start > 0 && content[start] !== '{') start--;
+
+    let depth = 0;
+    let end = start;
+    for (let i = start; i < content.length; i++) {
+        if (content[i] === '{') depth++;
+        if (content[i] === '}') depth--;
+        if (depth === 0) { end = i + 1; break; }
+    }
+
+    while (end < content.length && content[end] !== '\n') end++;
+    if (end < content.length && content[end] === ',') end++;
+    if (end < content.length && content[end] === '\n') end++;
+
+    return { start, end, text: content.substring(start, end) };
+}
+
 function removeFromScriptJs(folderName) {
     let content = fs.readFileSync(scriptPath, 'utf8');
 
-    const albumRegex = new RegExp(
-        "    \\{[\\s\\S]*?folder: '" + folderName.replace(/-/g, '\\-') + "'[\\s\\S]*?\\},?\\n",
-        'g'
-    );
-    content = content.replace(albumRegex, '');
+    let entry = findEntry(content, 'folder', folderName);
+    while (entry) {
+        content = content.substring(0, entry.start) + content.substring(entry.end);
+        entry = findEntry(content, 'folder', folderName);
+    }
 
-    const eventRegex = new RegExp(
-        "    \\{[\\s\\S]*?date: '" + folderName.replace(/-/g, '\\-') + "'[\\s\\S]*?\\},?\\n",
-        'g'
-    );
-    content = content.replace(eventRegex, '');
+    entry = findEntry(content, 'date', folderName);
+    while (entry) {
+        content = content.substring(0, entry.start) + content.substring(entry.end);
+        entry = findEntry(content, 'date', folderName);
+    }
+
+    content = content.replace(/,\s*\n\s*\n/g, '\n');
+    content = content.replace(/\n{3,}/g, '\n\n');
 
     fs.writeFileSync(scriptPath, content, 'utf8');
 }
