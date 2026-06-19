@@ -190,12 +190,23 @@ var galleryAlbums = [
         folder: '2026-06-19',
         images: ['https://res.cloudinary.com/deiitwupc/image/upload/v1781790286/orpheum/images/2026-06-19/2026-06-19.png', 'https://res.cloudinary.com/deiitwupc/image/upload/v1781790292/orpheum/images/2026-06-19/2026-06-19_3.png'],
         poster: 'https://res.cloudinary.com/deiitwupc/image/upload/v1781790284/orpheum/images/2026-06-19/poster/2026.06.19.png'
+    },
+    {
+        date: '20.06.2026',
+        dayName: 'Субота',
+        name: 'Test',
+        folder: '2026-06-20',
+        images: ['https://res.cloudinary.com/deiitwupc/image/upload/v1781865209/orpheum/images/2026-06-20/poster/2026-06-20.png'],
+        poster: 'https://res.cloudinary.com/deiitwupc/image/upload/v1781865209/orpheum/images/2026-06-20/poster/2026-06-20.png'
     }
+
 ];
 
 // ===== Events data =====
 var eventsData = [
-    { day: '19', month: 'Черв', name: 'День Фермера', time: '21:00 — 03:00', dj: 'RESIDENT DJs', price: '100 ₴', banner: 'https://res.cloudinary.com/deiitwupc/image/upload/v1781790264/orpheum/images/banners/2026-06-19.jpg', date: '2026-06-19' }
+    { day: '19', month: 'Черв', name: 'День Фермера', time: '21:00 — 03:00', dj: 'RESIDENT DJs', price: '100 ₴', banner: 'https://res.cloudinary.com/deiitwupc/image/upload/v1781790264/orpheum/images/banners/2026-06-19.jpg', date: '2026-06-19' },
+    { day: '20', month: 'Черв', name: 'Test', time: '21:00 — 03:00', dj: 'RESIDENT DJs', price: '150 ₴', banner: 'https://res.cloudinary.com/deiitwupc/image/upload/v1781865210/orpheum/images/banners/2026-06-20.png', date: '2026-06-20' }
+
 ];
 
 // Render events
