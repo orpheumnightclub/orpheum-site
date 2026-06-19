@@ -196,7 +196,7 @@ var galleryAlbums = [
         dayName: 'Субота',
         name: 'Test',
         folder: '2026-06-20',
-        images: ['https://res.cloudinary.com/deiitwupc/image/upload/v1781865209/orpheum/images/2026-06-20/poster/2026-06-20.png'],
+        images: ['https://res.cloudinary.com/deiitwupc/image/upload/v1781865209/orpheum/images/2026-06-20/poster/2026-06-20.png', 'https://res.cloudinary.com/deiitwupc/image/upload/v1781866215/orpheum/images/2026-06-20/2026-06-20_1.jpg', 'https://res.cloudinary.com/deiitwupc/image/upload/v1781866216/orpheum/images/2026-06-20/2026-06-20_2.jpg', 'https://res.cloudinary.com/deiitwupc/image/upload/v1781866217/orpheum/images/2026-06-20/2026-06-20_3.jpg'],
         poster: 'https://res.cloudinary.com/deiitwupc/image/upload/v1781865209/orpheum/images/2026-06-20/poster/2026-06-20.png'
     }
 
