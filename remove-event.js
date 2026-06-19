@@ -44,6 +44,7 @@ function getAlbums() {
 
 function getEventImages(folderName) {
     const result = { poster: null, banner: null, photos: [] };
+
     for (const [key, url] of Object.entries(urlMap)) {
         if (!key.startsWith('images/' + folderName + '/')) continue;
         const file = key.split('/').pop();
@@ -51,6 +52,24 @@ function getEventImages(folderName) {
         else if (file.includes('_banner')) result.banner = { key, url, file };
         else result.photos.push({ key, url, file });
     }
+
+    const content = fs.readFileSync(scriptPath, 'utf8');
+    const urlRegex = /https:\/\/res\.cloudinary\.com\/[^'"]+/g;
+    let m;
+    while ((m = urlRegex.exec(content)) !== null) {
+        const url = m[0];
+        if (!url.includes('/' + folderName + '/')) continue;
+        const already = Object.values(urlMap).includes(url);
+        if (already) continue;
+        const filePart = url.split('/').pop();
+        const ext = path.extname(filePart);
+        const base = path.basename(filePart, ext);
+        const key = 'images/' + folderName + '/' + base + ext;
+        if (url.includes('/poster/')) result.poster = { key, url, file: base + ext };
+        else if (url.includes('/banners/')) result.banner = { key, url, file: base + ext };
+        else result.photos.push({ key, url, file: base + ext });
+    }
+
     result.photos.sort((a, b) => a.file.localeCompare(b.file));
     return result;
 }
