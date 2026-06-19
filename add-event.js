@@ -224,15 +224,24 @@ function updateScriptJs(events) {
         const eventMatch = content.match(eventRegex);
         if (!eventMatch) continue;
 
+        const timeStr = ev.info.time || '21:00 — 03:00';
+        const priceStr = ev.info.price || '';
+        const djStr = ev.info.dj || 'RESIDENT DJs';
+
+        const eventEntry =
+            '    { day: \'' + ev.day + '\', month: \'' + ev.monthShort + '\', name: \'' + ev.info.name.replace(/'/g, "\\'") + '\', time: \'' + timeStr + '\', dj: \'' + djStr + '\', price: \'' + priceStr + '\', banner: \'' + (ev.bannerUrl || '') + '\', date: \'' + ev.folderName + '\' }';
+
         const existingEvent = eventMatch[2].includes("'" + ev.folderName + "'");
-        if (!existingEvent) {
-            const timeStr = ev.info.time || '21:00 — 03:00';
-            const priceStr = ev.info.price || '';
-            const djStr = ev.info.dj || 'RESIDENT DJs';
-
-            const eventEntry =
-                '    { day: \'' + ev.day + '\', month: \'' + ev.monthShort + '\', name: \'' + ev.info.name.replace(/'/g, "\\'") + '\', time: \'' + timeStr + '\', dj: \'' + djStr + '\', price: \'' + priceStr + '\', banner: \'' + (ev.bannerUrl || '') + '\', date: \'' + ev.folderName + '\' }';
-
+        if (existingEvent) {
+            const entryRegex = new RegExp(
+                "(\\{[\\s\\S]*?date: '" + ev.folderName.replace(/-/g, '\\-') + "'[\\s\\S]*?\\})"
+            );
+            const entryMatch = content.match(entryRegex);
+            if (entryMatch) {
+                content = content.replace(entryRegex, eventEntry);
+                console.log('Event updated:', ev.folderName);
+            }
+        } else {
             const lastEntryEnd = eventMatch[2].trimEnd();
             const hasTrailingComma = lastEntryEnd.endsWith(',');
             const comma = hasTrailingComma ? '' : ',';
