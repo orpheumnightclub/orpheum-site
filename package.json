@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/orpheumnightclub/orpheum-site#readme",
   "dependencies": {
-    "cloudinary": "^2.10.0"
+    "cloudinary": "^2.10.0",
+    "pdf-parse": "^2.4.5",
+    "pdfkit": "^0.19.1"
   }
 }
