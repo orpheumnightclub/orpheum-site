@@ -184,6 +184,15 @@ document.head.appendChild(animStyle);
 // ===== Gallery: date-based albums =====
 var galleryAlbums = [
     {
+        date: '26.06.2026',
+        dayName: 'П'ятниця',
+        name: 'День Боротьби зі злоуживанням',
+        folder: '2026-06-26',
+        images: ['https://res.cloudinary.com/deiitwupc/image/upload/v1782120535/orpheum/images/2026-06-26/poster/2026-06-26.png'],
+        poster: 'https://res.cloudinary.com/deiitwupc/image/upload/v1782120535/orpheum/images/2026-06-26/poster/2026-06-26.png'
+    },
+
+    {
         date: '20.06.2026',
         dayName: 'Субота',
         name: 'День Жонглювання',
@@ -205,6 +214,8 @@ var galleryAlbums = [
 
 // ===== Events data =====
 var eventsData = [
+    { day: '26', month: 'Черв', name: 'День Боротьби зі злоуживанням', time: '21:00 — 03:00', dj: 'RESIDENT DJs', price: '150 ₴', banner: 'https://res.cloudinary.com/deiitwupc/image/upload/v1782120538/orpheum/images/banners/2026-06-26.png', date: '2026-06-26' },
+
     { day: '20', month: 'Черв', name: 'День Жонглювання', time: '21:00 — 03:00', dj: 'RESIDENT DJs', price: '100 ₴', banner: 'https://res.cloudinary.com/deiitwupc/image/upload/v1781947880/orpheum/images/banners/2026-06-20.png', date: '2026-06-20' },
 
     
