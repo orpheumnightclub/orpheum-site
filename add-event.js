@@ -205,7 +205,7 @@ function updateScriptJs(events) {
             const albumEntry =
                 '    {\n' +
                 '        date: \'' + ev.dateStr + '\',\n' +
-                '        dayName: \'' + ev.dayName + '\',\n' +
+                '        dayName: \'' + ev.dayName.replace(/'/g, "\\'") + '\',\n' +
                 '        name: \'' + ev.info.name.replace(/'/g, "\\'") + '\',\n' +
                 '        folder: \'' + ev.folderName + '\',\n' +
                 '        images: [' + ev.imageUrls.map(u => "'" + u + "'").join(', ') + '],\n' +
@@ -230,7 +230,7 @@ function updateScriptJs(events) {
         const djStr = ev.info.dj || 'RESIDENT DJs';
 
         const eventEntry =
-            '    { day: \'' + ev.day + '\', month: \'' + ev.monthShort + '\', name: \'' + ev.info.name.replace(/'/g, "\\'") + '\', time: \'' + timeStr + '\', dj: \'' + djStr + '\', price: \'' + priceStr + '\', banner: \'' + (ev.bannerUrl || '') + '\', date: \'' + ev.folderName + '\' }';
+            '    { day: \'' + ev.day + '\', month: \'' + ev.monthShort + '\', name: \'' + ev.info.name.replace(/'/g, "\\'") + '\', time: \'' + timeStr + '\', dj: \'' + djStr.replace(/'/g, "\\'") + '\', price: \'' + priceStr + '\', banner: \'' + (ev.bannerUrl || '') + '\', date: \'' + ev.folderName + '\' }';
 
         const existingEvent = content.substring(eventOpen, content.indexOf('\n];', eventOpen)).includes("'" + ev.folderName + "'");
         if (existingEvent) {

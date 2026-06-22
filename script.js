@@ -185,7 +185,7 @@ document.head.appendChild(animStyle);
 var galleryAlbums = [
     {
         date: '26.06.2026',
-        dayName: 'П'ятниця',
+        dayName: 'П\'ятниця',
         name: 'День Боротьби зі злоуживанням',
         folder: '2026-06-26',
         images: ['https://res.cloudinary.com/deiitwupc/image/upload/v1782120535/orpheum/images/2026-06-26/poster/2026-06-26.png'],
