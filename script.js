@@ -467,13 +467,8 @@ function isMartialLawActive() {
     return localStorage.getItem('martialLaw') === '1';
 }
 
-// Show/hide admin toggle
 var adminToggle = document.getElementById('adminToggle');
 var adminToggleStatus = document.getElementById('adminToggleStatus');
-if (isPageAdmin && adminToggle) {
-    adminToggle.classList.add('visible');
-    updateAdminToggleUI();
-}
 
 function updateAdminToggleUI() {
     if (!adminToggleStatus) return;
@@ -492,6 +487,32 @@ if (adminToggle) {
         localStorage.setItem('martialLaw', current === '1' ? '0' : '1');
         updateAdminToggleUI();
     });
+}
+
+// Show admin toggle for URL ?admin OR Telegram admin
+function showAdminToggle() {
+    if (adminToggle) {
+        adminToggle.classList.add('visible');
+        updateAdminToggleUI();
+    }
+}
+
+if (isPageAdmin) {
+    showAdminToggle();
+} else if (isMiniApp && tg.initDataUnsafe.user) {
+    // Check admin via Telegram API
+    var userId = tg.initDataUnsafe.user.id;
+    fetch('https://api.telegram.org/bot' + TG_BOT_TOKEN + '/getChatMember?chat_id=' + TG_CHAT_ID + '&user_id=' + userId)
+        .then(function(r) { return r.json(); })
+        .then(function(res) {
+            if (res.ok && res.result) {
+                var s = res.result.status;
+                if (s === 'administrator' || s === 'creator' || s === 'member') {
+                    showAdminToggle();
+                }
+            }
+        })
+        .catch(function() {});
 }
 
 // Modal logic

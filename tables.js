@@ -869,13 +869,8 @@ function isMartialLawActive() {
     return localStorage.getItem('martialLaw') === '1';
 }
 
-// Admin toggle
 var adminToggle = document.getElementById('adminToggle');
 var adminToggleStatus = document.getElementById('adminToggleStatus');
-if (isPageAdmin && adminToggle) {
-    adminToggle.classList.add('visible');
-    updateAdminToggleUI();
-}
 
 function updateAdminToggleUI() {
     if (!adminToggleStatus) return;
@@ -896,6 +891,30 @@ if (adminToggle) {
     });
 }
 
+function showAdminToggle() {
+    if (adminToggle) {
+        adminToggle.classList.add('visible');
+        updateAdminToggleUI();
+    }
+}
+
+// Show toggle for URL ?admin or Telegram admin (isAdmin already set by checkAdmin)
+if (isPageAdmin) {
+    showAdminToggle();
+} else if (isMiniApp) {
+    // Wait for checkAdmin to finish, then show toggle if admin
+    var _martialCheckInterval = setInterval(function() {
+        if (typeof isAdmin !== 'undefined' && isAdmin !== false) {
+            clearInterval(_martialCheckInterval);
+            showAdminToggle();
+        }
+    }, 200);
+    // Stop checking after 5s
+    setTimeout(function() { clearInterval(_martialCheckInterval); }, 5000);
+} else {
+    // Not in Telegram, not ?admin — no toggle
+}
+
 // Modal logic
 var warModal = document.getElementById('warModal');
 var warModalClose = document.getElementById('warModalClose');
@@ -914,5 +933,10 @@ if (warModal) {
 
 // If martial law active and not admin — show modal on tables page
 if (!isPageAdmin && isMartialLawActive()) {
-    warModal.classList.add('active');
+    // Delay slightly to let checkAdmin run first
+    setTimeout(function() {
+        if (!isAdmin) {
+            warModal.classList.add('active');
+        }
+    }, 1500);
 }
