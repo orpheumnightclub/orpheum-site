@@ -857,3 +857,62 @@ document.getElementById('tableBookingForm').addEventListener('submit', function(
 });
 
 renderAll();
+
+// ===== Martial Law Mode =====
+var isPageAdmin = window.location.search.indexOf('admin') !== -1;
+
+if (localStorage.getItem('martialLaw') === null) {
+    localStorage.setItem('martialLaw', '1');
+}
+
+function isMartialLawActive() {
+    return localStorage.getItem('martialLaw') === '1';
+}
+
+// Admin toggle
+var adminToggle = document.getElementById('adminToggle');
+var adminToggleStatus = document.getElementById('adminToggleStatus');
+if (isPageAdmin && adminToggle) {
+    adminToggle.classList.add('visible');
+    updateAdminToggleUI();
+}
+
+function updateAdminToggleUI() {
+    if (!adminToggleStatus) return;
+    if (isMartialLawActive()) {
+        adminToggleStatus.textContent = 'ON';
+        adminToggleStatus.classList.remove('off');
+    } else {
+        adminToggleStatus.textContent = 'OFF';
+        adminToggleStatus.classList.add('off');
+    }
+}
+
+if (adminToggle) {
+    adminToggle.addEventListener('click', function() {
+        var current = localStorage.getItem('martialLaw');
+        localStorage.setItem('martialLaw', current === '1' ? '0' : '1');
+        updateAdminToggleUI();
+    });
+}
+
+// Modal logic
+var warModal = document.getElementById('warModal');
+var warModalClose = document.getElementById('warModalClose');
+
+if (warModalClose) {
+    warModalClose.addEventListener('click', function() {
+        warModal.classList.remove('active');
+    });
+}
+
+if (warModal) {
+    warModal.addEventListener('click', function(e) {
+        if (e.target === warModal) warModal.classList.remove('active');
+    });
+}
+
+// If martial law active and not admin — show modal on tables page
+if (!isPageAdmin && isMartialLawActive()) {
+    warModal.classList.add('active');
+}

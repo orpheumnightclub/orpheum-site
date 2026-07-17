@@ -167,6 +167,29 @@
     </div>
 </div>
 
+<!-- Martial law modal -->
+<div class="war-modal" id="warModal">
+    <div class="war-modal__content">
+        <div class="war-modal__icon">🇺🇦</div>
+        <h2 class="war-modal__title">Бронювання тимчасово недоступне</h2>
+        <p class="war-modal__text">
+            Наразі наш клуб не працює через воєнний стан в країні.
+            Ми сумуємо за нашими гостями та чекаємо на мирне майбутнє.
+        </p>
+        <p class="war-modal__text war-modal__text--accent">
+            Все обов'язково повернеться. Переможемо!
+        </p>
+        <button class="war-modal__btn" id="warModalClose">Зрозуміло</button>
+    </div>
+</div>
+
+<!-- Admin toggle -->
+<button class="admin-toggle" id="adminToggle" title="Перемкнути режим мобілізації">
+    <span class="admin-toggle__icon">⚙</span>
+    <span class="admin-toggle__label">Мобілізація</span>
+    <span class="admin-toggle__status" id="adminToggleStatus">ON</span>
+</button>
+
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
     <script src="tables.js?v=12"></script>

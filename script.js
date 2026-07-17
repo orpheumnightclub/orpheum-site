@@ -454,3 +454,68 @@ if (lightboxBody) {
         applyTransform();
     }, { passive: false });
 }
+
+// ===== Martial Law Mode =====
+var isPageAdmin = window.location.search.indexOf('admin') !== -1;
+
+// Default: martial law ON
+if (localStorage.getItem('martialLaw') === null) {
+    localStorage.setItem('martialLaw', '1');
+}
+
+function isMartialLawActive() {
+    return localStorage.getItem('martialLaw') === '1';
+}
+
+// Show/hide admin toggle
+var adminToggle = document.getElementById('adminToggle');
+var adminToggleStatus = document.getElementById('adminToggleStatus');
+if (isPageAdmin && adminToggle) {
+    adminToggle.classList.add('visible');
+    updateAdminToggleUI();
+}
+
+function updateAdminToggleUI() {
+    if (!adminToggleStatus) return;
+    if (isMartialLawActive()) {
+        adminToggleStatus.textContent = 'ON';
+        adminToggleStatus.classList.remove('off');
+    } else {
+        adminToggleStatus.textContent = 'OFF';
+        adminToggleStatus.classList.add('off');
+    }
+}
+
+if (adminToggle) {
+    adminToggle.addEventListener('click', function() {
+        var current = localStorage.getItem('martialLaw');
+        localStorage.setItem('martialLaw', current === '1' ? '0' : '1');
+        updateAdminToggleUI();
+    });
+}
+
+// Modal logic
+var warModal = document.getElementById('warModal');
+var warModalClose = document.getElementById('warModalClose');
+
+if (warModalClose) {
+    warModalClose.addEventListener('click', function() {
+        warModal.classList.remove('active');
+    });
+}
+
+if (warModal) {
+    warModal.addEventListener('click', function(e) {
+        if (e.target === warModal) warModal.classList.remove('active');
+    });
+}
+
+// Intercept booking link clicks
+document.querySelectorAll('a[href="tables.html"]').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+        if (!isPageAdmin && isMartialLawActive()) {
+            e.preventDefault();
+            warModal.classList.add('active');
+        }
+    });
+});
