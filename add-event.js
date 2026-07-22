@@ -56,21 +56,26 @@ function findEventImages(folderPath, folderName) {
     });
     const banner = imgFiles.find(f => {
         const base = path.basename(f, path.extname(f));
-        return base === folderName + '_banner';
+        return base === folderName + '_banner' || base === folderName + '_baner';
     });
     const photos = imgFiles.filter(f => f !== poster && f !== banner).sort();
     return { poster, banner, photos };
 }
 
-async function uploadToCloudinary(localPath, publicId) {
-    const result = await cloudinary.uploader.upload(localPath, {
+async function uploadToCloudinary(localPath, publicId, transformation) {
+    const options = {
         public_id: publicId,
         resource_type: 'image',
-        overwrite: true,
-        transformation: [
+        overwrite: true
+    };
+    if (transformation) {
+        options.transformation = [transformation];
+    } else {
+        options.transformation = [
             { width: 1200, height: 750, crop: 'limit', quality: 'auto:good', format: 'auto' }
-        ]
-    });
+        ];
+    }
+    const result = await cloudinary.uploader.upload(localPath, options);
     return result.secure_url;
 }
 
@@ -110,7 +115,8 @@ async function processEvent(folderName) {
         } else {
             const posterPath = path.join(folderPath, images.poster);
             const publicId = 'orpheum/images/' + folderName + '/poster/' + folderName;
-            urls.poster = await uploadToCloudinary(posterPath, publicId);
+            const posterTransformation = { width: 1080, height: 1350, crop: 'limit', quality: 'auto:good', format: 'auto' };
+            urls.poster = await uploadToCloudinary(posterPath, publicId, posterTransformation);
             urlMap[posterKey] = urls.poster;
             console.log('  Poster:', urls.poster);
         }
@@ -158,7 +164,6 @@ async function processEvent(folderName) {
     const dateStr = day + '.' + (month + 1 < 10 ? '0' + (month + 1) : month + 1) + '.' + year;
 
     const allImageUrls = [];
-    if (urls.poster) allImageUrls.push(urls.poster);
     allImageUrls.push(...newPhotoUrls);
 
     return {
