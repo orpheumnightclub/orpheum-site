@@ -99,9 +99,10 @@ function findEntry(content, searchKey, searchValue) {
         if (depth === 0) { end = i + 1; break; }
     }
 
-    while (end < content.length && content[end] !== '\n') end++;
+    // Skip trailing whitespace and comma, but keep the newline for the next entry
+    while (end < content.length && (content[end] === ' ' || content[end] === '\t')) end++;
     if (end < content.length && content[end] === ',') end++;
-    if (end < content.length && content[end] === '\n') end++;
+    while (end < content.length && content[end] === '\n') end++;
 
     return { start, end, text: content.substring(start, end) };
 }
@@ -121,6 +122,8 @@ function removeFromScriptJs(folderName) {
         entry = findEntry(content, 'date', folderName);
     }
 
+    // Fix: ensure commas between remaining entries
+    content = content.replace(/\}\s*\n\s*\{/g, '},\n    {');
     content = content.replace(/,\s*\n\s*\n/g, '\n');
     content = content.replace(/\n{3,}/g, '\n\n');
 
