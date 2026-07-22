@@ -223,7 +223,7 @@ var galleryAlbums = [
 
 // ===== Events data =====
 var eventsData = [
-    { day: '25', month: 'Лип', name: 'Red Hat', time: '21:00 — 03:00', dj: 'RESIDENT DJs', price: '250 ₴', banner: '', date: '2026-07-25' },
+        { day: '25', month: 'Лип', name: 'Red Hat', time: '21:00 — 03:00', dj: 'RESIDENT DJs', price: '250 ₴', banner: 'https://res.cloudinary.com/deiitwupc/image/upload/v1784705219/orpheum/images/banners/2026-07-25.png', date: '2026-07-25' },
 
     { day: '26', month: 'Черв', name: 'День Боротьби зі злоуживанням', time: '21:00 — 03:00', dj: 'RESIDENT DJs', price: '150 ₴', banner: 'https://res.cloudinary.com/deiitwupc/image/upload/v1782120538/orpheum/images/banners/2026-06-26.png', date: '2026-06-26' },
 

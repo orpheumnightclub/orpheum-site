@@ -175,27 +175,43 @@ async function processEvent(folderName) {
     };
 }
 
+function extractArraySection(content, varName) {
+    const start = content.indexOf('var ' + varName + ' = [');
+    if (start === -1) return null;
+    const arrStart = content.indexOf('[', start);
+    let depth = 0;
+    let end = arrStart;
+    for (let i = arrStart; i < content.length; i++) {
+        if (content[i] === '[') depth++;
+        if (content[i] === ']') depth--;
+        if (depth === 0) { end = i + 1; break; }
+    }
+    return { start: arrStart, end, text: content.substring(arrStart, end) };
+}
+
 function updateScriptJs(events) {
     let content = fs.readFileSync(scriptPath, 'utf8');
 
     for (const ev of events) {
-        const albumStart = content.indexOf('var galleryAlbums = [');
-        if (albumStart === -1) continue;
-        const albumOpen = content.indexOf('[', albumStart + 19);
-        const existingAlbum = content.includes("'" + ev.folderName + "'");
+        // ===== galleryAlbums =====
+        const albumSection = extractArraySection(content, 'galleryAlbums');
+        if (!albumSection) continue;
+        const albumInSection = albumSection.text.includes("'" + ev.folderName + "'");
 
-        if (existingAlbum) {
+        if (albumInSection) {
             const entryRegex = new RegExp(
                 "(\\{[\\s\\S]*?folder: '" + ev.folderName.replace(/-/g, '\\-') + "'[\\s\\S]*?images: \\[)([\\s\\S]*?)(\\][\\s\\S]*?\\})"
             );
-            const entryMatch = content.match(entryRegex);
+            const entryMatch = albumSection.text.match(entryRegex);
             if (entryMatch) {
                 const existingUrls = entryMatch[2].split(',').map(u => u.trim().replace(/'/g, '')).filter(u => u.length > 0);
                 const newUrls = ev.imageUrls.filter(u => !existingUrls.includes(u));
                 if (newUrls.length > 0) {
                     const combined = [...existingUrls, ...newUrls];
                     const newImagesStr = combined.map(u => "'" + u + "'").join(', ');
-                    content = content.replace(entryRegex, '$1' + newImagesStr + '$3');
+                    const oldSection = albumSection.text;
+                    const newSection = oldSection.replace(entryRegex, '$1' + newImagesStr + '$3');
+                    content = content.substring(0, albumSection.start) + newSection + content.substring(albumSection.end);
                     console.log('Album updated:', ev.folderName, '(+' + newUrls.length + ' photos)');
                 } else {
                     console.log('Album unchanged:', ev.folderName, '(no new photos)');
@@ -212,18 +228,19 @@ function updateScriptJs(events) {
                 '        poster: \'' + (ev.posterUrl || '') + '\'\n' +
                 '    }';
 
-            const afterOpen = content.substring(albumOpen + 1);
+            const afterOpen = content.substring(albumSection.start + 1);
             const firstNewline = afterOpen.indexOf('\n');
             const indent = afterOpen.substring(0, firstNewline).match(/^\s*/)[0];
             const nextChar = afterOpen.trimStart()[0];
             const needsComma = nextChar && nextChar !== ']';
-            content = content.substring(0, albumOpen + 1) + '\n' + albumEntry + (needsComma ? ',' : '') + '\n' + indent + content.substring(albumOpen + 1);
+            content = content.substring(0, albumSection.start + 1) + '\n' + albumEntry + (needsComma ? ',' : '') + '\n' + indent + content.substring(albumSection.start + 1);
             console.log('Album added:', ev.folderName);
         }
 
-        const eventStart = content.indexOf('var eventsData = [');
-        if (eventStart === -1) continue;
-        const eventOpen = content.indexOf('[', eventStart + 17);
+        // ===== eventsData =====
+        const eventSection = extractArraySection(content, 'eventsData');
+        if (!eventSection) continue;
+        const eventInSection = eventSection.text.includes("'" + ev.folderName + "'");
 
         const timeStr = ev.info.time || '21:00 — 03:00';
         const priceStr = ev.info.price || '';
@@ -232,23 +249,24 @@ function updateScriptJs(events) {
         const eventEntry =
             '    { day: \'' + ev.day + '\', month: \'' + ev.monthShort + '\', name: \'' + ev.info.name.replace(/'/g, "\\'") + '\', time: \'' + timeStr + '\', dj: \'' + djStr.replace(/'/g, "\\'") + '\', price: \'' + priceStr + '\', banner: \'' + (ev.bannerUrl || '') + '\', date: \'' + ev.folderName + '\' }';
 
-        const existingEvent = content.substring(eventOpen, content.indexOf('\n];', eventOpen)).includes("'" + ev.folderName + "'");
-        if (existingEvent) {
+        if (eventInSection) {
             const entryRegex = new RegExp(
                 "(\\{[\\s\\S]*?date: '" + ev.folderName.replace(/-/g, '\\-') + "'[\\s\\S]*?\\})"
             );
-            const entryMatch = content.match(entryRegex);
+            const entryMatch = eventSection.text.match(entryRegex);
             if (entryMatch) {
-                content = content.replace(entryRegex, eventEntry);
+                const oldSection = eventSection.text;
+                const newSection = oldSection.replace(entryRegex, eventEntry);
+                content = content.substring(0, eventSection.start) + newSection + content.substring(eventSection.end);
                 console.log('Event updated:', ev.folderName);
             }
         } else {
-            const afterOpen = content.substring(eventOpen + 1);
+            const afterOpen = content.substring(eventSection.start + 1);
             const firstNewline = afterOpen.indexOf('\n');
             const indent = afterOpen.substring(0, firstNewline).match(/^\s*/)[0];
             const nextChar = afterOpen.trimStart()[0];
             const needsComma = nextChar && nextChar !== ']';
-            content = content.substring(0, eventOpen + 1) + '\n' + eventEntry + (needsComma ? ',' : '') + '\n' + indent + content.substring(eventOpen + 1);
+            content = content.substring(0, eventSection.start + 1) + '\n' + eventEntry + (needsComma ? ',' : '') + '\n' + indent + content.substring(eventSection.start + 1);
             console.log('Event added:', ev.folderName);
         }
     }
