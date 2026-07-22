@@ -183,15 +183,7 @@ document.head.appendChild(animStyle);
 
 // ===== Gallery: date-based albums =====
 var galleryAlbums = [
-    {
-        date: '25.07.2026',
-        dayName: 'Субота',
-        name: 'Red Hat',
-        folder: '2026-07-25',
-        images: ['https://res.cloudinary.com/deiitwupc/image/upload/v1784703645/orpheum/images/2026-07-25/2026-07-25_1.png'],
-        poster: 'https://res.cloudinary.com/deiitwupc/image/upload/v1784703643/orpheum/images/2026-07-25/poster/2026-07-25.png'
-    },
-
+    
     {
         date: '26.06.2026',
         dayName: 'П\'ятниця',
@@ -199,8 +191,7 @@ var galleryAlbums = [
         folder: '2026-06-26',
         images: ['https://res.cloudinary.com/deiitwupc/image/upload/v1782120535/orpheum/images/2026-06-26/poster/2026-06-26.png'],
         poster: 'https://res.cloudinary.com/deiitwupc/image/upload/v1782120535/orpheum/images/2026-06-26/poster/2026-06-26.png'
-    },
-
+    }
     {
         date: '20.06.2026',
         dayName: 'Субота',
@@ -208,9 +199,7 @@ var galleryAlbums = [
         folder: '2026-06-20',
         images: ['https://res.cloudinary.com/deiitwupc/image/upload/v1781947877/orpheum/images/2026-06-20/poster/2026-06-20.png'],
         poster: 'https://res.cloudinary.com/deiitwupc/image/upload/v1781947877/orpheum/images/2026-06-20/poster/2026-06-20.png'
-    },
-
-    
+    }
     {
         date: '19.06.2026',
         dayName: 'П\'ятниця',
@@ -223,13 +212,9 @@ var galleryAlbums = [
 
 // ===== Events data =====
 var eventsData = [
-                { day: '25', month: 'Лип', name: 'Red Hat', time: '21:00 — 03:00', dj: 'RESIDENT DJs', price: '250 ₴', banner: 'https://res.cloudinary.com/deiitwupc/image/upload/v1784705219/orpheum/images/banners/2026-07-25.png', date: '2026-07-25' },
-
-    { day: '26', month: 'Черв', name: 'День Боротьби зі злоуживанням', time: '21:00 — 03:00', dj: 'RESIDENT DJs', price: '150 ₴', banner: 'https://res.cloudinary.com/deiitwupc/image/upload/v1782120538/orpheum/images/banners/2026-06-26.png', date: '2026-06-26' },
-
-    { day: '20', month: 'Черв', name: 'День Жонглювання', time: '21:00 — 03:00', dj: 'RESIDENT DJs', price: '100 ₴', banner: 'https://res.cloudinary.com/deiitwupc/image/upload/v1781947880/orpheum/images/banners/2026-06-20.png', date: '2026-06-20' },
-
-    
+                
+    { day: '26', month: 'Черв', name: 'День Боротьби зі злоуживанням', time: '21:00 — 03:00', dj: 'RESIDENT DJs', price: '150 ₴', banner: 'https://res.cloudinary.com/deiitwupc/image/upload/v1782120538/orpheum/images/banners/2026-06-26.png', date: '2026-06-26' }
+    { day: '20', month: 'Черв', name: 'День Жонглювання', time: '21:00 — 03:00', dj: 'RESIDENT DJs', price: '100 ₴', banner: 'https://res.cloudinary.com/deiitwupc/image/upload/v1781947880/orpheum/images/banners/2026-06-20.png', date: '2026-06-20' }
     { day: '19', month: 'Черв', name: 'День Фермера', time: '21:00 — 03:00', dj: 'RESIDENT DJs', price: '100 ₴', banner: 'https://res.cloudinary.com/deiitwupc/image/upload/v1781790264/orpheum/images/banners/2026-06-19.jpg', date: '2026-06-19' }
 ];
 
