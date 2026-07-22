@@ -653,7 +653,7 @@ body {
 
 .gallery__album-poster {
     width: 100%;
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 3 / 4;
     object-fit: cover;
     display: block;
 }
